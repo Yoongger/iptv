@@ -195,18 +195,48 @@ class M3UOptimizer:
             is_valid, avg_speed, valid_count, total_count = self.test_m3u_file(file_path)
             
             if is_valid:
-                # 提取IP地址
-                ip_match = re.search(r'(\d+\.\d+\.\d+\.\d+)', file_name)
-                ip = ip_match.group(1) if ip_match else "unknown"
+                # 提取源地址（IP地址或域名）
+                # 1. 首先尝试从文件内容中提取源地址
+                channels = self.parse_m3u_file(file_path)
+                channel_count = len(channels)  # 获取实际频道数量
+                source_from_content = None
+                if channels and len(channels) > 0:
+                    # 从第一个频道URL中提取域名或IP
+                    url = channels[0]['url']
+                    url_match = re.search(r'https?://([^:/]+)', url)
+                    if url_match:
+                        source_from_content = url_match.group(1)
+                
+                # 2. 如果从内容中无法提取，则尝试从文件名中提取
+                if source_from_content:
+                    source = source_from_content
+                else:
+                    # 从文件名中提取IP地址
+                    ip_match = re.search(r'(\d+\.\d+\.\d+\.\d+)', file_name)
+                    if ip_match:
+                        source = ip_match.group(1)
+                    else:
+                        # 从文件名中提取域名
+                        domain_match = re.search(r'([a-zA-Z0-9][-a-zA-Z0-9]*(\.[a-zA-Z0-9][-a-zA-Z0-9]*)+)', file_name)
+                        if domain_match:
+                            source = domain_match.group(1)
+                        else:
+                            # 尝试从文件名中提取任何有意义的标识符
+                            parts = file_name.split('_')
+                            if len(parts) > 0 and not parts[0].startswith('['):
+                                source = parts[0]
+                            else:
+                                source = "unknown"
                 
                 file_results.append({
                     'file_name': file_name,
                     'file_path': file_path,
                     'avg_speed': avg_speed,
                     'valid_count': valid_count,
-                    'total_count': total_count,
+                    'total_count': channel_count,  # 使用实际解析到的频道数量
                     'availability': valid_count / total_count if total_count > 0 else 0,
-                    'ip': ip
+                    'ip': source,
+                    'channel_count': channel_count  # 添加频道数量字段
                 })
             else:
                 # 删除无效文件
@@ -224,10 +254,20 @@ class M3UOptimizer:
         renamed_files = []
         for i, result in enumerate(file_results):
             rank = i + 1
-            new_name = f"[{rank:02d}]{result['ip']}.m3u"
+            # 确保文件扩展名只有一个.m3u
+            source = result['ip']
+            channel_count = result['channel_count']
+            
+            # 统一格式：所有文件名都包含频道数量
+            new_name = f"[{rank:02d}]{source}_{channel_count}ch.m3u"
             new_path = os.path.join(self.m3u_dir, new_name)
             
             try:
+                # 如果目标文件已存在，先删除它
+                if os.path.exists(new_path) and new_path != result['file_path']:
+                    os.remove(new_path)
+                    self.logger.info(f"已删除已存在的文件: {new_name}")
+                
                 os.rename(result['file_path'], new_path)
                 renamed_files.append({
                     'old_name': result['file_name'],

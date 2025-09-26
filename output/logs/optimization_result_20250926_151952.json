@@ -1,0 +1,320 @@
+{
+  "timestamp": "2025-09-26T15:19:52.005672",
+  "total_files": 49,
+  "valid_files": 46,
+  "deleted_files": [
+    "123.56.129.203_186ch_20250926_组播_可用100%.m3u",
+    "[06]219.137.202.171.m3u",
+    "[08]113.206.188.36.m3u"
+  ],
+  "renamed_files": [
+    {
+      "old_name": "[01]106.46.113.111.m3u",
+      "new_name": "[01]106.46.113.111.m3u",
+      "rank": 1,
+      "avg_speed": 28.97500991821289,
+      "availability": 0.4
+    },
+    {
+      "old_name": "[02]110.241.188.144.m3u",
+      "new_name": "[04]110.241.188.144.m3u",
+      "rank": 4,
+      "avg_speed": 37.05195585886637,
+      "availability": 0.6
+    },
+    {
+      "old_name": "[04]110.251.231.30.m3u",
+      "new_name": "[05]110.251.231.30.m3u",
+      "rank": 5,
+      "avg_speed": 44.56644058227539,
+      "availability": 1.0
+    },
+    {
+      "old_name": "121.19.134.88_68ch_20250926_酒店_可用100%.m3u",
+      "new_name": "[06]121.19.134.88.m3u",
+      "rank": 6,
+      "avg_speed": 50.53458213806152,
+      "availability": 1.0
+    },
+    {
+      "old_name": "120.8.135.168_699ch_20250926_酒店_可用100%.m3u",
+      "new_name": "[07]120.8.135.168.m3u",
+      "rank": 7,
+      "avg_speed": 55.98646402359009,
+      "availability": 0.4
+    },
+    {
+      "old_name": "[05]116.232.150.101.m3u",
+      "new_name": "[08]116.232.150.101.m3u",
+      "rank": 8,
+      "avg_speed": 57.89496898651123,
+      "availability": 1.0
+    },
+    {
+      "old_name": "[12]113.25.104.67.m3u",
+      "new_name": "[09]113.25.104.67.m3u",
+      "rank": 9,
+      "avg_speed": 62.74882952372233,
+      "availability": 0.9
+    },
+    {
+      "old_name": "[28]221.220.135.97.m3u",
+      "new_name": "[10]221.220.135.97.m3u",
+      "rank": 10,
+      "avg_speed": 71.63491249084473,
+      "availability": 1.0
+    },
+    {
+      "old_name": "[07]221.220.135.97.m3u",
+      "new_name": "[11]221.220.135.97.m3u",
+      "rank": 11,
+      "avg_speed": 75.51317744784885,
+      "availability": 0.9
+    },
+    {
+      "old_name": "[09]171.38.84.209.m3u",
+      "new_name": "[12]171.38.84.209.m3u",
+      "rank": 12,
+      "avg_speed": 93.24624538421631,
+      "availability": 1.0
+    },
+    {
+      "old_name": "171.38.91.144_70ch_20250926_酒店_可用100%.m3u",
+      "new_name": "[13]171.38.91.144.m3u",
+      "rank": 13,
+      "avg_speed": 93.41897964477539,
+      "availability": 1.0
+    },
+    {
+      "old_name": "[10]218.104.239.114.m3u",
+      "new_name": "[14]218.104.239.114.m3u",
+      "rank": 14,
+      "avg_speed": 95.3132152557373,
+      "availability": 1.0
+    },
+    {
+      "old_name": "[15]27.223.142.46.m3u",
+      "new_name": "[15]27.223.142.46.m3u",
+      "rank": 15,
+      "avg_speed": 96.56820297241211,
+      "availability": 1.0
+    },
+    {
+      "old_name": "[26]218.1.136.141.m3u",
+      "new_name": "[16]218.1.136.141.m3u",
+      "rank": 16,
+      "avg_speed": 101.30393505096436,
+      "availability": 0.8
+    },
+    {
+      "old_name": "all_channels_sorted.m3u",
+      "new_name": "[17]unknown.m3u",
+      "rank": 17,
+      "avg_speed": 102.9205322265625,
+      "availability": 0.6
+    },
+    {
+      "old_name": "118.79.115.129_184ch_20250926_组播_可用100%.m3u",
+      "new_name": "[18]118.79.115.129.m3u",
+      "rank": 18,
+      "avg_speed": 103.88636589050293,
+      "availability": 1.0
+    },
+    {
+      "old_name": "[22]125.123.27.136.m3u",
+      "new_name": "[19]125.123.27.136.m3u",
+      "rank": 19,
+      "avg_speed": 107.43348598480225,
+      "availability": 1.0
+    },
+    {
+      "old_name": "[27]118.79.115.112.m3u",
+      "new_name": "[20]118.79.115.112.m3u",
+      "rank": 20,
+      "avg_speed": 110.8757734298706,
+      "availability": 1.0
+    },
+    {
+      "old_name": "[16]118.79.113.25.m3u",
+      "new_name": "[21]118.79.113.25.m3u",
+      "rank": 21,
+      "avg_speed": 114.44582939147949,
+      "availability": 1.0
+    },
+    {
+      "old_name": "[21]218.1.136.141.m3u",
+      "new_name": "[22]218.1.136.141.m3u",
+      "rank": 22,
+      "avg_speed": 120.19438213772244,
+      "availability": 0.9
+    },
+    {
+      "old_name": "[14]125.34.48.82.m3u",
+      "new_name": "[23]125.34.48.82.m3u",
+      "rank": 23,
+      "avg_speed": 122.64702320098877,
+      "availability": 1.0
+    },
+    {
+      "old_name": "[17]118.79.113.25.m3u",
+      "new_name": "[24]118.79.113.25.m3u",
+      "rank": 24,
+      "avg_speed": 123.40262201097276,
+      "availability": 0.9
+    },
+    {
+      "old_name": "[18]123.157.31.182.m3u",
+      "new_name": "[25]123.157.31.182.m3u",
+      "rank": 25,
+      "avg_speed": 133.14318656921387,
+      "availability": 1.0
+    },
+    {
+      "old_name": "[13]27.223.141.76.m3u",
+      "new_name": "[26]27.223.141.76.m3u",
+      "rank": 26,
+      "avg_speed": 133.2219123840332,
+      "availability": 1.0
+    },
+    {
+      "old_name": "[24]115.205.255.116.m3u",
+      "new_name": "[27]115.205.255.116.m3u",
+      "rank": 27,
+      "avg_speed": 143.03475618362427,
+      "availability": 0.4
+    },
+    {
+      "old_name": "[20]116.116.118.243.m3u",
+      "new_name": "[28]116.116.118.243.m3u",
+      "rank": 28,
+      "avg_speed": 210.1151602608817,
+      "availability": 0.7
+    },
+    {
+      "old_name": "[19]116.116.118.243.m3u",
+      "new_name": "[29]116.116.118.243.m3u",
+      "rank": 29,
+      "avg_speed": 237.11085319519043,
+      "availability": 0.7
+    },
+    {
+      "old_name": "[29]unknown.m3u",
+      "new_name": "[30]unknown.m3u",
+      "rank": 30,
+      "avg_speed": 270.2767610549927,
+      "availability": 1.0
+    },
+    {
+      "old_name": "36.136.38.87_94ch_20250926_酒店_可用100%.m3u",
+      "new_name": "[31]36.136.38.87.m3u",
+      "rank": 31,
+      "avg_speed": 286.8072271347046,
+      "availability": 1.0
+    },
+    {
+      "old_name": "[23]unknown.m3u",
+      "new_name": "[32]unknown.m3u",
+      "rank": 32,
+      "avg_speed": 332.7597379684448,
+      "availability": 0.6
+    },
+    {
+      "old_name": "[31]222.160.180.66.m3u",
+      "new_name": "[33]222.160.180.66.m3u",
+      "rank": 33,
+      "avg_speed": 455.6361198425293,
+      "availability": 0.5
+    },
+    {
+      "old_name": "[34]113.95.134.96.m3u",
+      "new_name": "[34]113.95.134.96.m3u",
+      "rank": 34,
+      "avg_speed": 642.9608821868896,
+      "availability": 0.5
+    },
+    {
+      "old_name": "222.160.180.66_468ch_20250926_代理_可用100%.m3u",
+      "new_name": "[35]222.160.180.66.m3u",
+      "rank": 35,
+      "avg_speed": 858.0079078674316,
+      "availability": 0.3
+    },
+    {
+      "old_name": "[30]221.232.102.35.m3u",
+      "new_name": "[36]221.232.102.35.m3u",
+      "rank": 36,
+      "avg_speed": 921.3118076324463,
+      "availability": 0.5
+    },
+    {
+      "old_name": "221.232.103.138_90ch_20250926_组播_可用100%.m3u",
+      "new_name": "[37]221.232.103.138.m3u",
+      "rank": 37,
+      "avg_speed": 1049.763798713684,
+      "availability": 0.6
+    },
+    {
+      "old_name": "[25]222.160.180.66.m3u",
+      "new_name": "[38]222.160.180.66.m3u",
+      "rank": 38,
+      "avg_speed": 1053.5818934440613,
+      "availability": 0.4
+    },
+    {
+      "old_name": "120.40.57.7_114ch_20250926_组播_可用100%.m3u",
+      "new_name": "[39]120.40.57.7.m3u",
+      "rank": 39,
+      "avg_speed": 1283.810794353485,
+      "availability": 0.8
+    },
+    {
+      "old_name": "[32]221.232.102.35.m3u",
+      "new_name": "[40]221.232.102.35.m3u",
+      "rank": 40,
+      "avg_speed": 1480.411171913147,
+      "availability": 0.8
+    },
+    {
+      "old_name": "183.164.37.50_200ch_20250926_组播_可用100%.m3u",
+      "new_name": "[41]183.164.37.50.m3u",
+      "rank": 41,
+      "avg_speed": 1582.5681686401367,
+      "availability": 0.4
+    },
+    {
+      "old_name": "[11]121.34.151.68.m3u",
+      "new_name": "[42]121.34.151.68.m3u",
+      "rank": 42,
+      "avg_speed": 1592.2946333885193,
+      "availability": 0.4
+    },
+    {
+      "old_name": "113.95.134.96_333ch_20250926_组播_可用100%.m3u",
+      "new_name": "[43]113.95.134.96.m3u",
+      "rank": 43,
+      "avg_speed": 1819.0304438273113,
+      "availability": 0.3
+    },
+    {
+      "old_name": "[33]183.164.37.50.m3u",
+      "new_name": "[44]183.164.37.50.m3u",
+      "rank": 44,
+      "avg_speed": 2490.052064259847,
+      "availability": 0.3
+    },
+    {
+      "old_name": "114.225.2.142_276ch_20250926_组播_可用100%.m3u",
+      "new_name": "[45]114.225.2.142.m3u",
+      "rank": 45,
+      "avg_speed": 2670.9492802619934,
+      "availability": 0.4
+    },
+    {
+      "old_name": "113.102.161.76_24ch_20250926_酒店_可用100%.m3u",
+      "new_name": "[46]113.102.161.76.m3u",
+      "rank": 46,
+      "avg_speed": 3880.726178487142,
+      "availability": 0.9
+    }
+  ]
+}

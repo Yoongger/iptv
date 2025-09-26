@@ -1,0 +1,281 @@
+{
+  "timestamp": "2025-09-26T16:24:33.521654",
+  "total_files": 41,
+  "valid_files": 41,
+  "deleted_files": [],
+  "renamed_files": [
+    {
+      "old_name": "[03]110.241.188.144.m3u",
+      "new_name": "[02]110.241.188.144.m3u",
+      "rank": 2,
+      "avg_speed": 35.68335374196371,
+      "availability": 0.6
+    },
+    {
+      "old_name": "[04]110.251.231.30.m3u",
+      "new_name": "[03]110.251.231.30.m3u",
+      "rank": 3,
+      "avg_speed": 43.37170124053955,
+      "availability": 1.0
+    },
+    {
+      "old_name": "[05]116.232.150.101.m3u",
+      "new_name": "[04]116.232.150.101.m3u",
+      "rank": 4,
+      "avg_speed": 56.05494976043701,
+      "availability": 1.0
+    },
+    {
+      "old_name": "[06]221.220.135.97.m3u",
+      "new_name": "[05]221.220.135.97.m3u",
+      "rank": 5,
+      "avg_speed": 71.47134674919977,
+      "availability": 0.9
+    },
+    {
+      "old_name": "[07]221.220.135.97.m3u",
+      "new_name": "[06]221.220.135.97.m3u",
+      "rank": 6,
+      "avg_speed": 76.85127258300781,
+      "availability": 1.0
+    },
+    {
+      "old_name": "[34]171.38.84.209.m3u",
+      "new_name": "[07]171.38.84.209.m3u",
+      "rank": 7,
+      "avg_speed": 87.68653869628906,
+      "availability": 1.0
+    },
+    {
+      "old_name": "[08]171.38.91.144.m3u",
+      "new_name": "[08]171.38.91.144.m3u",
+      "rank": 8,
+      "avg_speed": 93.82789134979248,
+      "availability": 1.0
+    },
+    {
+      "old_name": "[21]36.136.38.87.m3u",
+      "new_name": "[09]36.136.38.87.m3u",
+      "rank": 9,
+      "avg_speed": 95.05322575569153,
+      "availability": 0.8
+    },
+    {
+      "old_name": "[30]27.223.142.46.m3u",
+      "new_name": "[10]27.223.142.46.m3u",
+      "rank": 10,
+      "avg_speed": 98.39146137237549,
+      "availability": 1.0
+    },
+    {
+      "old_name": "[10]218.104.239.114.m3u",
+      "new_name": "[11]218.104.239.114.m3u",
+      "rank": 11,
+      "avg_speed": 101.10962390899658,
+      "availability": 1.0
+    },
+    {
+      "old_name": "[12]118.79.113.25.m3u",
+      "new_name": "[12]118.79.113.25.m3u",
+      "rank": 12,
+      "avg_speed": 105.4329342312283,
+      "availability": 0.9
+    },
+    {
+      "old_name": "[11]27.223.141.76.m3u",
+      "new_name": "[13]27.223.141.76.m3u",
+      "rank": 13,
+      "avg_speed": 113.39681148529053,
+      "availability": 1.0
+    },
+    {
+      "old_name": "[15]118.79.113.25.m3u",
+      "new_name": "[14]118.79.113.25.m3u",
+      "rank": 14,
+      "avg_speed": 115.28934372795953,
+      "availability": 0.9
+    },
+    {
+      "old_name": "[14]125.34.48.82.m3u",
+      "new_name": "[15]125.34.48.82.m3u",
+      "rank": 15,
+      "avg_speed": 123.57337134225028,
+      "availability": 0.7
+    },
+    {
+      "old_name": "[16]118.79.115.112.m3u",
+      "new_name": "[16]118.79.115.112.m3u",
+      "rank": 16,
+      "avg_speed": 130.32734394073486,
+      "availability": 1.0
+    },
+    {
+      "old_name": "[13]218.1.136.141.m3u",
+      "new_name": "[17]218.1.136.141.m3u",
+      "rank": 17,
+      "avg_speed": 144.08159255981445,
+      "availability": 1.0
+    },
+    {
+      "old_name": "[20]116.116.118.243.m3u",
+      "new_name": "[18]116.116.118.243.m3u",
+      "rank": 18,
+      "avg_speed": 149.949312210083,
+      "availability": 0.4
+    },
+    {
+      "old_name": "[17]123.157.31.182.m3u",
+      "new_name": "[19]123.157.31.182.m3u",
+      "rank": 19,
+      "avg_speed": 158.82174968719482,
+      "availability": 1.0
+    },
+    {
+      "old_name": "[23]125.123.27.136.m3u",
+      "new_name": "[20]125.123.27.136.m3u",
+      "rank": 20,
+      "avg_speed": 161.35799884796143,
+      "availability": 1.0
+    },
+    {
+      "old_name": "[24]115.205.255.116.m3u",
+      "new_name": "[21]115.205.255.116.m3u",
+      "rank": 21,
+      "avg_speed": 164.6968126296997,
+      "availability": 0.4
+    },
+    {
+      "old_name": "[19]116.116.118.243.m3u",
+      "new_name": "[22]116.116.118.243.m3u",
+      "rank": 22,
+      "avg_speed": 196.29377126693726,
+      "availability": 0.4
+    },
+    {
+      "old_name": "[18]unknown.m3u.m3u",
+      "new_name": "[23]unknown.m3u.m3u.m3u",
+      "rank": 23,
+      "avg_speed": 249.5230266026088,
+      "availability": 0.7
+    },
+    {
+      "old_name": "[25]113.25.104.67.m3u",
+      "new_name": "[24]113.25.104.67.m3u",
+      "rank": 24,
+      "avg_speed": 326.56426429748535,
+      "availability": 1.0
+    },
+    {
+      "old_name": "[29]unknown.m3u.m3u",
+      "new_name": "[26]unknown.m3u.m3u.m3u",
+      "rank": 26,
+      "avg_speed": 479.3015480041504,
+      "availability": 1.0
+    },
+    {
+      "old_name": "[36]183.164.37.50.m3u",
+      "new_name": "[27]183.164.37.50.m3u",
+      "rank": 27,
+      "avg_speed": 479.8213839530945,
+      "availability": 0.4
+    },
+    {
+      "old_name": "[33]222.160.180.66.m3u",
+      "new_name": "[28]222.160.180.66.m3u",
+      "rank": 28,
+      "avg_speed": 588.2275104522705,
+      "availability": 0.6
+    },
+    {
+      "old_name": "[40]221.232.102.35.m3u",
+      "new_name": "[29]221.232.102.35.m3u",
+      "rank": 29,
+      "avg_speed": 593.1093096733093,
+      "availability": 0.8
+    },
+    {
+      "old_name": "[35]222.160.180.66.m3u",
+      "new_name": "[30]222.160.180.66.m3u",
+      "rank": 30,
+      "avg_speed": 593.8075269971575,
+      "availability": 0.7
+    },
+    {
+      "old_name": "[28]120.40.57.7.m3u",
+      "new_name": "[31]120.40.57.7.m3u",
+      "rank": 31,
+      "avg_speed": 640.4247813754612,
+      "availability": 0.9
+    },
+    {
+      "old_name": "[38]113.95.134.96.m3u",
+      "new_name": "[32]113.95.134.96.m3u",
+      "rank": 32,
+      "avg_speed": 827.6578426361084,
+      "availability": 0.5
+    },
+    {
+      "old_name": "[32]113.102.161.76.m3u",
+      "new_name": "[33]113.102.161.76.m3u",
+      "rank": 33,
+      "avg_speed": 1079.6538293361664,
+      "availability": 0.8
+    },
+    {
+      "old_name": "[26]218.1.136.141.m3u",
+      "new_name": "[34]218.1.136.141.m3u",
+      "rank": 34,
+      "avg_speed": 1103.0439615249634,
+      "availability": 1.0
+    },
+    {
+      "old_name": "[09]118.79.115.129.m3u",
+      "new_name": "[35]118.79.115.129.m3u",
+      "rank": 35,
+      "avg_speed": 1124.8761547936333,
+      "availability": 0.9
+    },
+    {
+      "old_name": "[31]222.160.180.66.m3u",
+      "new_name": "[36]222.160.180.66.m3u",
+      "rank": 36,
+      "avg_speed": 1229.8676013946533,
+      "availability": 0.5
+    },
+    {
+      "old_name": "[39]183.164.37.50.m3u",
+      "new_name": "[37]183.164.37.50.m3u",
+      "rank": 37,
+      "avg_speed": 1253.6411966596331,
+      "availability": 0.7
+    },
+    {
+      "old_name": "[37]221.232.102.35.m3u",
+      "new_name": "[38]221.232.102.35.m3u",
+      "rank": 38,
+      "avg_speed": 1341.5481646855671,
+      "availability": 0.6
+    },
+    {
+      "old_name": "[41]114.225.2.142.m3u",
+      "new_name": "[39]114.225.2.142.m3u",
+      "rank": 39,
+      "avg_speed": 1547.9741394519806,
+      "availability": 0.8
+    },
+    {
+      "old_name": "[27]221.232.103.138.m3u",
+      "new_name": "[40]221.232.103.138.m3u",
+      "rank": 40,
+      "avg_speed": 1642.8020894527435,
+      "availability": 0.8
+    },
+    {
+      "old_name": "[22]unknown.m3u.m3u",
+      "new_name": "[41]unknown.m3u.m3u.m3u",
+      "rank": 41,
+      "avg_speed": 2090.549945831299,
+      "availability": 0.5
+    }
+  ]
+}
