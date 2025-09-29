@@ -74,7 +74,14 @@ def main():
         # 执行M3U文件优化
         logger.info("开始执行M3U文件优化...")
         print("开始执行M3U文件优化...")
-        optimizer = M3UOptimizer("output/m3u", "output/logs")
+        
+        # 添加VLC路径到系统PATH
+        vlc_path = r"D:\Program Files\VideoLAN\VLC"
+        if vlc_path not in os.environ["PATH"]:
+            os.environ["PATH"] += os.pathsep + vlc_path
+        
+        # 强制使用VLC测试模式
+        optimizer = M3UOptimizer("output/m3u", "output/logs", use_vlc=True)
         optimizer.optimize_m3u_files()
             
     except Exception as e:
@@ -91,8 +98,13 @@ def optimize_only():
     os.makedirs('output/m3u', exist_ok=True)
     os.makedirs('output/logs', exist_ok=True)
     
-    # 执行M3U文件优化
-    optimizer = M3UOptimizer("output/m3u", "output/logs")
+    # 添加VLC路径到系统PATH
+    vlc_path = r"D:\Program Files\VideoLAN\VLC"
+    if vlc_path not in os.environ["PATH"]:
+        os.environ["PATH"] += os.pathsep + vlc_path
+    
+    # 强制使用VLC测试模式
+    optimizer = M3UOptimizer("output/m3u", "output/logs", use_vlc=True)
     optimizer.optimize_m3u_files()
 
 if __name__ == "__main__":
