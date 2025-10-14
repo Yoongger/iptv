@@ -21,7 +21,7 @@ class M3UProcessor:
         self.max_workers = max_workers
     
     def _test_channel_speed(self, channel: Channel) -> float:
-        """测试单个频道连接速度(毫秒)
+        """测试单个频道连接速度和可用性
         
         Args:
             channel: 频道对象
@@ -37,10 +37,27 @@ class M3UProcessor:
                 stream=True,
                 headers={'User-Agent': 'VLC/3.0.0'}
             )
+            
+            # 更严格的可用性检测
             if response.status_code == 200:
-                return (time.time() - start_time) * 1000
-        except:
-            pass
+                # 检查响应头，确保是有效的流媒体
+                content_type = response.headers.get('content-type', '').lower()
+                is_stream = any(x in content_type for x in ['video', 'audio', 'application/x-mpegurl'])
+                
+                # 尝试读取少量数据验证流是否有效
+                if is_stream:
+                    # 对于流媒体，尝试读取前1KB数据
+                    for chunk in response.iter_content(chunk_size=1024):
+                        if chunk:  # 成功读取到数据
+                            return (time.time() - start_time) * 1000
+                        break
+                else:
+                    # 对于非流媒体，直接返回成功
+                    return (time.time() - start_time) * 1000
+                    
+        except Exception as e:
+            if self.logger:
+                self.logger.debug(f"频道 {channel.name} 检测失败: {e}")
         return float('inf')
 
     def _sort_channels_by_speed(self, channels: List[Channel]) -> List[Channel]:
@@ -165,13 +182,17 @@ class M3UProcessor:
             # 保存带测速排序的M3U文件
             sorted_channels = self._sort_channels_by_speed(source_channels)
             
-            # 计算可用率
-            valid_count = sum(1 for c in sorted_channels if c.url)
+            # 计算可用率（基于实际测速结果）
+            valid_count = sum(1 for c in sorted_channels if self._test_channel_speed(c) < float('inf'))
             availability = valid_count / len(source_channels) if source_channels else 0
             
-            # 更新文件名包含可用率
-            availability_pct = int(availability * 100)
-            filename = f"{source_ip}_{channel_count}ch_{timestamp}_{location}_可用{availability_pct}%.m3u"
+            # 只有当实际检测到可用频道时才显示可用率
+            if valid_count > 0:
+                availability_pct = int(availability * 100)
+                filename = f"{source_ip}_{channel_count}ch_{timestamp}_{location}_可用{availability_pct}%.m3u"
+            else:
+                filename = f"{source_ip}_{channel_count}ch_{timestamp}_{location}_未检测.m3u"
+                
             filepath = f"output/m3u/{filename}"
             
             # 保存文件

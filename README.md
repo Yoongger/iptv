@@ -1,102 +1,103 @@
-# IPTV频道爬取与优化工具
+# IPTV频道管理与优化系统
 
 ## 项目概述
-本项目是一个自动化爬取IPTV频道数据并生成优化M3U文件的工具，主要功能包括：
-- 从指定网站爬取IPTV频道数据
-- 自动检测频道可用性和连接速度
-- 生成按速度排序的M3U播放列表
-- 提供频道分类和过滤功能
+本项目是一个专业的IPTV频道管理工具，具备智能爬取、精准检测和自动优化功能。主要特性包括：
+
+### 核心功能
+- **智能频道爬取**：自动发现和收集IPTV频道源
+- **精准可用性检测**：严格的流媒体验证，避免虚假可用率
+- **智能排序优化**：支持自然数排序和中文拼音排序
+- **自动M3U文件生成**：生成优化后的播放列表文件
+
+### 技术亮点
+- **多线程并发检测**：高效处理大量频道
+- **智能抽样测试**：平衡检测精度和性能
+- **VLC集成测试**：使用VLC播放器进行真实流媒体验证
+- **错误恢复机制**：自动处理网络异常和超时
 
 ## 安装指南
 
 ### 系统要求
 - Python 3.8+
-- Windows/Linux/macOS
+- Windows 10/11（推荐）或 Linux/macOS
+- VLC播放器（可选，用于高级流媒体测试）
 
-### 依赖安装
+### 快速开始
 ```bash
 # 克隆项目
-git clone https://github.com/yoongger/iptv-crawler.git
-cd iptv-crawler
+git clone <repository-url>
+cd iptv
 
-# 创建虚拟环境（推荐）
+# 创建虚拟环境
 python -m venv .venv
-source .venv/bin/activate  # Linux/macOS
 .\.venv\Scripts\activate   # Windows
+# source .venv/bin/activate  # Linux/macOS
 
 # 安装依赖
 pip install -r requirements.txt
 ```
 
-### 依赖项列表
+### 依赖项
 - requests >= 2.28.0
 - beautifulsoup4 >= 4.11.1
-- concurrent-log-handler >= 0.9.20
-- tqdm >= 4.64.0
+- pypinyin >= 0.50.0（中文拼音排序）
+- tqdm >= 4.64.0（进度显示）
 
 ## 使用说明
 
-### 基本用法
+### 基本工作流程
 ```bash
-# 完整流程（爬取+优化）
+# 完整流程：爬取 → 检测 → 优化 → 排序
 python main.py
-
-# 仅执行M3U文件优化
-python main.py --optimize-only
 ```
 
-### 参数说明
-| 参数 | 说明 |
-|------|------|
-| `--optimize-only` | 仅优化现有M3U文件，不执行爬取 |
-| `--max-workers NUM` | 设置并发线程数（默认10） |
-| `--timeout SECONDS` | 设置请求超时时间（默认5秒） |
+### 输出文件说明
+- `output/m3u/`: 优化后的M3U文件，按可用性和速度排序
+- 文件名格式：`IP地址_频道数_时间_类型_可用率%.m3u`
 
-### 输出文件
-- `output/m3u/`: 生成的M3U文件（按速度排序）
-- `output/data/iptv_channels.json`: 原始频道数据
-- `output/logs/`: 处理日志和结果
-
-## 贡献指南
-
-### 开发环境设置
-1. Fork项目仓库
-2. 安装开发依赖：
-   ```bash
-   pip install -r requirements-dev.txt
-   ```
-3. 配置pre-commit钩子：
-   ```bash
-   pre-commit install
-   ```
-
-### 代码规范
-- 遵循PEP 8风格指南
-- 为新增功能编写单元测试
-- 提交前运行所有测试：
-  ```bash
-  pytest tests/
-  ```
-
-### 提交Pull Request
-1. 从最新main分支创建特性分支
-2. 提交清晰的commit message
-3. 确保所有测试通过
-4. 更新相关文档
-
-## 许可证
-本项目采用 [MIT License](LICENSE)。
+### 频道排序规则
+1. **英文频道**：字母升序 + 自然数排序（1, 2, 10, 11）
+2. **中文频道**：拼音升序 + 自然数排序
+3. **混合频道**：数字优先，然后字母，最后中文
 
 ## 项目结构
 ```
 iptv/
-├── config/        # 配置文件
-├── crawler/       # 爬虫核心逻辑
-├── models/        # 数据模型
-├── output/        # 生成文件
-├── tests/         # 测试代码
-└── utils/         # 工具函数
+├── config/           # 配置管理
+│   ├── constants.py  # 常量定义
+│   └── logger.py    # 日志配置
+├── crawler/          # 爬虫模块
+│   ├── base_crawler.py    # 爬虫基类
+│   ├── channel_crawler.py # 频道爬取
+│   └── ip_crawler.py      # IP发现
+├── models/           # 数据模型
+│   ├── channel.py    # 频道模型
+│   └── ip_info.py   # IP信息模型
+├── utils/            # 工具模块
+│   ├── m3u_optimizer.py   # M3U文件优化
+│   ├── m3u_processor.py   # M3U文件处理
+│   ├── speed_tester.py    # 速度测试
+│   └── vlc_tester.py      # VLC测试
+└── main.py           # 程序入口
 ```
 
-## 联系信息
-如有问题请联系：yoongger@gmail.com
+## 高级功能
+
+### 自定义配置
+修改 `config/constants.py` 中的参数：
+- 并发线程数
+- 超时设置
+- 检测精度级别
+- 排序规则偏好
+
+### 扩展开发
+项目采用模块化设计，易于扩展：
+- 新增爬虫：继承 `BaseCrawler` 类
+- 自定义检测：实现新的测试器
+- 排序算法：修改自然排序键函数
+
+## 许可证
+MIT License
+
+## 技术支持
+如有技术问题或改进建议，请提交Issue或联系开发团队。

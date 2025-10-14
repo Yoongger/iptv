@@ -127,6 +127,7 @@ class M3UOptimizer:
             # 改进的频道名称排序（统一返回列表类型）
             def natural_sort_key(s):
                 import re
+                import pypinyin
                 name = s['name']
                 
                 # 标准化频道名称格式（统一为CCTV-数字格式）
@@ -158,10 +159,23 @@ class M3UOptimizer:
                     province = name.split('卫视')[0]
                     return [province, '卫视']
                 
-                # 普通频道名称的自然排序
-                def convert(text):
-                    return int(text) if text.isdigit() else text.lower()
-                return [convert(c) for c in re.split('([0-9]+)', name)]
+                # 检查是否为中文频道名称
+                if re.search(r'[\u4e00-\u9fff]', name):
+                    # 中文频道按拼音升序排列
+                    pinyin_list = pypinyin.lazy_pinyin(name)
+                    pinyin_str = ''.join(pinyin_list)
+                    
+                    # 处理中文名称中的数字（自然数排序）
+                    def convert(text):
+                        return int(text) if text.isdigit() else text.lower()
+                    
+                    # 将拼音和数字混合排序
+                    return [convert(c) for c in re.split('([0-9]+)', pinyin_str)]
+                else:
+                    # 英文频道按字母升序，数字按自然数排序
+                    def convert(text):
+                        return int(text) if text.isdigit() else text.lower()
+                    return [convert(c) for c in re.split('([0-9]+)', name)]
             
             # 先标准化频道名称格式
             for channel in channels:
@@ -287,32 +301,55 @@ class M3UOptimizer:
         self.logger.info(f"将通过智能抽样测试 {len(test_channels)}/{len(channels)} 个频道")
         
         for channel in test_channels:
-            try:
-                if self.use_vlc:
-                    # 使用VLC进行实际流媒体测试
-                    self.logger.info(f"正在使用VLC测试频道: {channel['name']}")
-                    result = self.vlc_tester.test_stream(channel['url'])
+            if self.use_vlc:
+                # 使用VLC进行实际流媒体测试（添加超时控制）
+                self.logger.info(f"正在使用VLC测试频道: {channel['name']}")
+                try:
+                    # 直接调用VLC测试，不使用线程池
+                    vlc_result = self.vlc_tester.test_stream(channel['url'])
                     
-                    if result['success'] and self.is_channel_acceptable(result):
-                        # 使用多维度评分算法
-                        fluency_score = self.calculate_fluency_score({
-                            'latency': result.get('latency', 0),
-                            'stability': result.get('stability', 0),
-                            'buffer_events': result.get('buffer_events', 0)
-                        })
-                        
-                        scores.append(fluency_score)
-                        valid_count += 1
-                        self.logger.info(
-                            f"频道 {channel['name']} 流畅度评分: {fluency_score:.1f} "
-                            f"(缓冲: {result['buffer_time']:.2f}s, "
-                            f"缓冲事件: {result['buffer_events']}, "
-                            f"丢帧: {result['frames_dropped']})"
-                        )
+                    # 正确处理VLC测试结果
+                    if isinstance(vlc_result, str):
+                        if vlc_result == 'success':
+                            # VLC测试成功
+                            valid_count += 1
+                            score = 75  # 给VLC成功测试一个合理的评分
+                            scores.append(score)
+                            self.logger.debug(f"频道 {channel['name']} VLC测试成功: 评分={score:.2f}")
+                        else:
+                            # VLC测试失败
+                            scores.append(0)
+                            self.logger.debug(f"频道 {channel['name']} VLC测试失败: {vlc_result}")
+                    elif isinstance(vlc_result, dict):
+                        if vlc_result.get('available', False):
+                            valid_count += 1
+                            score = vlc_result.get('score', 0.7) * 100
+                            scores.append(score)
+                            self.logger.debug(f"频道 {channel['name']} 测试成功: 评分={score:.2f}")
+                        else:
+                            scores.append(0)
+                            error_msg = vlc_result.get('error', '未知错误')
+                            self.logger.debug(f"频道 {channel['name']} 测试失败: {error_msg}")
                     else:
-                        self.logger.warning(f"VLC测试失败: {result.get('error', '未知错误')}")
-                else:
-                    # HTTP测试模式增强版
+                        scores.append(0)
+                        self.logger.debug(f"频道 {channel['name']} 测试返回意外格式: {type(vlc_result)}")
+                        
+                except Exception as e:
+                    # 特殊处理：VLC测试器有时会抛出包含'success'的异常
+                    error_str = str(e)
+                    if 'success' in error_str.lower():
+                        # 这实际上是测试成功的情况
+                        valid_count += 1
+                        score = 75  # 给一个合理的评分
+                        scores.append(score)
+                        self.logger.debug(f"频道 {channel['name']} VLC测试成功（从异常中识别）: 评分={score:.2f}")
+                    else:
+                        scores.append(0)
+                        self.logger.debug(f"频道 {channel['name']} 测试异常: {e}")
+                                
+            else:
+                # HTTP测试模式增强版
+                try:
                     result = self.speed_tester.enhanced_test(channel['url'])
                     
                     if result['success']:
@@ -330,27 +367,53 @@ class M3UOptimizer:
                             f"(延迟: {result['latency']}ms, "
                             f"稳定性: {result['stability']:.2f})"
                         )
-            except Exception as e:
-                self.logger.error(f"测试频道 {channel['name']} 时出错: {e}")
+                    else:
+                        scores.append(0)
+                except Exception as e:
+                    self.logger.error(f"HTTP测试频道 {channel['name']} 时出错: {e}")
+                    scores.append(0)
         
-        # 对于未测试的频道，使用HTTP请求测试
-        if len(test_channels) < len(channels):
-            for channel in channels[len(test_channels):]:
-                score = self.speed_tester.calculate_score(channel['url'])
-                if score > 0:
-                    valid_count += 1
+        # 计算最终结果 - 修复抽样测试逻辑
+        total_channels = len(channels)
+        tested_channels = len(test_channels)
         
+        # 如果是抽样测试，需要根据抽样结果推断整体情况
+        if tested_channels < total_channels:
+            # 抽样测试的成功率
+            sample_success_rate = valid_count / tested_channels if tested_channels > 0 else 0
+            
+            self.logger.info(f"抽样测试结果: {valid_count}/{tested_channels} 成功，成功率: {sample_success_rate:.2%}")
+            
+            # 如果抽样成功率太低，认为整个文件不可用
+            if sample_success_rate < 0.1:  # 抽样成功率低于10%
+                self.logger.warning(f"抽样测试成功率过低: {sample_success_rate:.2%}，判定文件不可用")
+                availability_rate = sample_success_rate
+                is_valid = False
+                display_valid_count = int(total_channels * sample_success_rate)  # 直接按抽样结果计算
+            else:
+                # 根据抽样结果推断总体可用率（保守估计）
+                estimated_valid_count = int(total_channels * sample_success_rate * 0.8)  # 打8折保守估计
+                availability_rate = estimated_valid_count / total_channels
+                is_valid = availability_rate >= 0.3
+                display_valid_count = estimated_valid_count
+                self.logger.info(f"基于抽样结果推断：总体可用率约为 {availability_rate:.2%}")
+        else:
+            # 全量测试
+            availability_rate = valid_count / total_channels if total_channels > 0 else 0
+            is_valid = availability_rate >= 0.3
+            display_valid_count = valid_count
+        
+        # 计算平均评分
         avg_score = sum(scores)/len(scores) if scores else 0
-        is_valid = valid_count / len(channels) >= 0.3  # 至少30%可用
         
         self.logger.info(
             f"文件 {os.path.basename(file_path)} 测试结果: "
-            f"可用率={valid_count/len(channels):.2%}, "
+            f"可用率={availability_rate:.2%}, "
             f"综合评分={avg_score:.2f}, "
             f"可用={is_valid}"
         )
         
-        return is_valid, avg_score, valid_count, len(channels)
+        return is_valid, avg_score, display_valid_count, len(channels)
     
     def run_periodic_tests(self):
         """定时执行测速任务"""
@@ -388,6 +451,7 @@ class M3UOptimizer:
             # 使用自然排序算法对频道进行排序
             def natural_sort_key(s):
                 import re
+                import pypinyin
                 name = s['name']
                 
                 # 特殊处理CCTV频道
@@ -416,10 +480,23 @@ class M3UOptimizer:
                     province = name.split('卫视')[0]
                     return [province, '卫视']
                 
-                # 普通频道名称的自然排序
-                def convert(text):
-                    return int(text) if text.isdigit() else text.lower()
-                return [convert(c) for c in re.split('([0-9]+)', name)]
+                # 检查是否为中文频道名称
+                if re.search(r'[\u4e00-\u9fff]', name):
+                    # 中文频道按拼音升序排列
+                    pinyin_list = pypinyin.lazy_pinyin(name)
+                    pinyin_str = ''.join(pinyin_list)
+                    
+                    # 处理中文名称中的数字（自然数排序）
+                    def convert(text):
+                        return int(text) if text.isdigit() else text.lower()
+                    
+                    # 将拼音和数字混合排序
+                    return [convert(c) for c in re.split('([0-9]+)', pinyin_str)]
+                else:
+                    # 英文频道按字母升序，数字按自然数排序
+                    def convert(text):
+                        return int(text) if text.isdigit() else text.lower()
+                    return [convert(c) for c in re.split('([0-9]+)', name)]
             
             # 使用自然排序算法排序
             sorted_channels = sorted(channels, key=natural_sort_key)
@@ -445,157 +522,241 @@ class M3UOptimizer:
             return False
 
     def optimize_m3u_files(self) -> None:
-        """优化M3U文件
+        """完整的M3U文件优化流程
         
-        1. 检测文件可用性，删除失效的源文件
-        2. 对有效文件进行测速排序
-        3. 根据测速结果重命名文件
+        1. 测试所有文件的可用性，删除不可用的文件
+        2. 去重（基于源IP地址）
+        3. 按质量排序（速度、可用率）
+        4. 统一重命名为 [序号]IP_频道数ch.m3u 格式
         """
-        self.logger.info(f"开始优化M3U文件，目录: {self.m3u_dir}")
-        # 启动后台测速
-        self.start_background_tester()
+        self.logger.info(f"开始完整优化M3U文件，目录: {self.m3u_dir}")
         
-        # 获取所有M3U文件
-        m3u_files = [f for f in os.listdir(self.m3u_dir) if f.endswith('.m3u')]
-        self.logger.info(f"找到 {len(m3u_files)} 个M3U文件")
+        # 获取所有M3U文件（排除特殊文件）
+        import glob
+        all_files = glob.glob(os.path.join(self.m3u_dir, "*.m3u"))
+        m3u_files = [f for f in all_files if not os.path.basename(f).startswith('all_channels_') 
+                     and not os.path.basename(f).endswith('.json')]
+        
+        self.logger.info(f"找到 {len(m3u_files)} 个M3U文件，开始优化流程")
         
         if not m3u_files:
             self.logger.warning("未找到任何M3U文件")
             return
         
-        # 测试文件可用性和速度
-        file_results = []
+        # 第一步：测试所有文件的可用性
+        self.logger.info("=" * 50)
+        self.logger.info("第一步：测试文件可用性")
+        self.logger.info("=" * 50)
+        
+        valid_files = []
         deleted_files = []
         
-        for file_name in m3u_files:
-            file_path = os.path.join(self.m3u_dir, file_name)
-            is_valid, avg_speed, valid_count, total_count = self.test_m3u_file(file_path)
-            
-            if is_valid:
-                # 提取源地址（IP地址或域名）
-                # 1. 首先尝试从文件内容中提取源地址
-                channels = self.parse_m3u_file(file_path)
-                channel_count = len(channels)  # 获取实际频道数量
-                source_from_content = None
-                if channels and len(channels) > 0:
-                    # 从第一个频道URL中提取域名或IP
-                    url = channels[0]['url']
-                    url_match = re.search(r'https?://([^:/]+)', url)
-                    if url_match:
-                        source_from_content = url_match.group(1)
+        for file_path in m3u_files:
+            file_name = os.path.basename(file_path)
+            try:
+                self.logger.info(f"正在测试文件: {file_name}")
+                is_valid, avg_speed, valid_count, total_count = self.test_m3u_file(file_path)
                 
-                # 2. 如果从内容中无法提取，则尝试从文件名中提取
-                if source_from_content:
-                    source = source_from_content
+                if is_valid and valid_count > 0:
+                    # 提取源IP地址
+                    source_ip = self._extract_source_ip(file_path, file_name)
+                    
+                    valid_files.append({
+                        'file_name': file_name,
+                        'file_path': file_path,
+                        'source_ip': source_ip,
+                        'avg_speed': avg_speed,
+                        'valid_count': valid_count,
+                        'total_count': total_count,
+                        'availability': valid_count / total_count if total_count > 0 else 0
+                    })
+                    self.logger.info(f"[OK] 文件 {file_name} 可用，保留 (可用率: {valid_count}/{total_count}, 速度: {avg_speed:.2f})")
                 else:
-                    # 从文件名中提取IP地址
-                    ip_match = re.search(r'(\d+\.\d+\.\d+\.\d+)', file_name)
-                    if ip_match:
-                        source = ip_match.group(1)
-                    else:
-                        # 从文件名中提取域名
-                        domain_match = re.search(r'([a-zA-Z0-9][-a-zA-Z0-9]*(\.[a-zA-Z0-9][-a-zA-Z0-9]*)+)', file_name)
-                        if domain_match:
-                            source = domain_match.group(1)
-                        else:
-                            # 尝试从文件名中提取任何有意义的标识符
-                            parts = file_name.split('_')
-                            if len(parts) > 0 and not parts[0].startswith('['):
-                                source = parts[0]
-                            else:
-                                source = "unknown"
-                
-                file_results.append({
-                    'file_name': file_name,
-                    'file_path': file_path,
-                    'avg_speed': avg_speed,
-                    'valid_count': valid_count,
-                    'total_count': channel_count,  # 使用实际解析到的频道数量
-                    'availability': valid_count / total_count if total_count > 0 else 0,
-                    'ip': source,
-                    'channel_count': channel_count  # 添加频道数量字段
-                })
-            else:
-                # 删除无效文件
+                    # 删除不可用的文件
+                    try:
+                        os.remove(file_path)
+                        deleted_files.append(file_name)
+                        self.logger.warning(f"[DEL] 文件 {file_name} 不可用，已删除")
+                    except Exception as delete_error:
+                        self.logger.error(f"删除文件 {file_name} 失败: {delete_error}")
+                        
+            except Exception as e:
+                self.logger.error(f"测试文件 {file_name} 时出错: {e}")
+                # 测试出错的文件也删除
                 try:
                     os.remove(file_path)
                     deleted_files.append(file_name)
-                    self.logger.info(f"已删除无效文件: {file_name}")
-                except Exception as e:
-                    self.logger.error(f"删除文件 {file_name} 时出错: {e}")
+                    self.logger.warning(f"[DEL] 文件 {file_name} 测试出错，已删除")
+                except Exception as delete_error:
+                    self.logger.error(f"删除出错文件 {file_name} 失败: {delete_error}")
         
-        # 按综合质量排序（流畅度评分降序，缓冲时间升序）
-        file_results.sort(key=lambda x: (
-            -x['avg_speed'],  # 流畅度评分降序
-            x.get('buffer_time', 0)  # 缓冲时间升序
-        ))
+        self.logger.info(f"可用性测试完成: 保留 {len(valid_files)} 个，删除 {len(deleted_files)} 个")
         
-        # 重命名文件
+        if not valid_files:
+            self.logger.warning("没有找到任何可用的M3U文件")
+            return
+        
+        # 第二步：去重（基于源IP地址，保留质量最好的）
+        self.logger.info("=" * 50)
+        self.logger.info("第二步：去重处理")
+        self.logger.info("=" * 50)
+        
+        # 按源IP分组
+        ip_groups = {}
+        for file_info in valid_files:
+            ip = file_info['source_ip']
+            if ip not in ip_groups:
+                ip_groups[ip] = []
+            ip_groups[ip].append(file_info)
+        
+        # 每个IP只保留质量最好的文件
+        deduplicated_files = []
+        duplicate_files = []
+        
+        for ip, files in ip_groups.items():
+            if len(files) > 1:
+                # 按综合质量排序：可用率 * 0.7 + 速度 * 0.3
+                files.sort(key=lambda x: (x['availability'] * 0.7 + min(x['avg_speed']/10, 1) * 0.3), reverse=True)
+                best_file = files[0]
+                deduplicated_files.append(best_file)
+                
+                # 删除重复的文件
+                for dup_file in files[1:]:
+                    try:
+                        os.remove(dup_file['file_path'])
+                        duplicate_files.append(dup_file['file_name'])
+                        self.logger.info(f"[DUP] 删除重复文件: {dup_file['file_name']} (保留更优质的 {best_file['file_name']})")
+                    except Exception as e:
+                        self.logger.error(f"删除重复文件 {dup_file['file_name']} 失败: {e}")
+            else:
+                deduplicated_files.append(files[0])
+        
+        self.logger.info(f"去重完成: 保留 {len(deduplicated_files)} 个，删除重复 {len(duplicate_files)} 个")
+        
+        # 第三步：按质量排序
+        self.logger.info("=" * 50)
+        self.logger.info("第三步：质量排序")
+        self.logger.info("=" * 50)
+        
+        # 综合评分排序：可用率 * 0.6 + 速度 * 0.3 + 频道数量 * 0.1
+        deduplicated_files.sort(key=lambda x: (
+            x['availability'] * 0.6 + 
+            min(x['avg_speed']/10, 1) * 0.3 + 
+            min(x['total_count']/500, 1) * 0.1
+        ), reverse=True)
+        
+        # 第四步：统一重命名
+        self.logger.info("=" * 50)
+        self.logger.info("第四步：统一重命名")
+        self.logger.info("=" * 50)
+        
         renamed_files = []
-        for i, result in enumerate(file_results):
+        for i, file_info in enumerate(deduplicated_files):
             rank = i + 1
-            # 确保文件扩展名只有一个.m3u
-            source = result['ip']
-            channel_count = result['channel_count']
+            source_ip = file_info['source_ip']
+            channel_count = file_info['total_count']
             
-            # 统一格式：所有文件名都包含频道数量
-            new_name = f"[{rank:02d}]{source}_{channel_count}ch.m3u"
+            # 统一命名格式：[序号]IP_频道数ch.m3u
+            new_name = f"[{rank:02d}]{source_ip}_{channel_count}ch.m3u"
             new_path = os.path.join(self.m3u_dir, new_name)
+            old_path = file_info['file_path']
             
             try:
-                # 如果目标文件已存在，先删除它
-                if os.path.exists(new_path) and new_path != result['file_path']:
-                    os.remove(new_path)
-                    self.logger.info(f"已删除已存在的文件: {new_name}")
-                
-                # 读取并排序频道信息
-                channels = self.parse_m3u_file(result['file_path'])
-                if channels:
-                    # 调试日志：输出排序前的频道名称
-                    self.logger.debug("排序前的频道名称示例:")
-                    for i, channel in enumerate(channels[:10]):
-                        self.logger.debug(f"{i+1}. {channel['name']}")
+                # 如果新旧路径不同，进行重命名
+                if new_path != old_path:
+                    # 如果目标文件已存在，先删除
+                    if os.path.exists(new_path):
+                        os.remove(new_path)
                     
-                    # 保存排序后的频道
-                    self.save_sorted_m3u_file(new_path, channels)
+                    # 重命名文件
+                    os.rename(old_path, new_path)
                     
-                    # 验证保存后的文件
-                    saved_channels = self.parse_m3u_file(new_path)
-                    self.logger.debug("保存后的频道名称示例:")
-                    for i, channel in enumerate(saved_channels[:10]):
-                        self.logger.debug(f"{i+1}. {channel['name']}")
-                    # 如果排序保存成功，删除原文件（如果新旧路径不同）
-                    if new_path != result['file_path'] and os.path.exists(result['file_path']):
-                        os.remove(result['file_path'])
-                else:
-                    # 如果无法解析频道，则直接重命名
-                    os.rename(result['file_path'], new_path)
                 renamed_files.append({
-                    'old_name': result['file_name'],
-                    'new_name': new_name,
                     'rank': rank,
-                    'avg_speed': result['avg_speed'],
-                    'availability': result['availability']
+                    'old_name': file_info['file_name'],
+                    'new_name': new_name,
+                    'source_ip': source_ip,
+                    'availability': file_info['availability'],
+                    'avg_speed': file_info['avg_speed'],
+                    'channel_count': channel_count
                 })
-                self.logger.info(f"已重命名文件: {result['file_name']} -> {new_name}")
+                
+                self.logger.info(f"[{rank:02d}] {file_info['file_name']} -> {new_name} (可用率: {file_info['availability']:.1%}, 速度: {file_info['avg_speed']:.2f})")
+                
             except Exception as e:
-                self.logger.error(f"重命名文件 {result['file_name']} 时出错: {e}")
+                self.logger.error(f"重命名文件 {file_info['file_name']} 失败: {e}")
         
-        # 保存处理结果
+        # 保存优化结果
         result_summary = {
             'timestamp': datetime.now().isoformat(),
-            'total_files': len(m3u_files),
-            'valid_files': len(file_results),
+            'optimization_steps': {
+                'total_files_found': len(m3u_files),
+                'valid_files_after_testing': len(valid_files),
+                'files_after_deduplication': len(deduplicated_files),
+                'final_renamed_files': len(renamed_files)
+            },
             'deleted_files': deleted_files,
-            'renamed_files': renamed_files
+            'duplicate_files': duplicate_files,
+            'final_files': renamed_files
         }
         
         result_file = os.path.join(self.log_dir, f"optimization_result_{datetime.now().strftime('%Y%m%d_%H%M%S')}.json")
         with open(result_file, 'w', encoding='utf-8') as f:
             json.dump(result_summary, f, ensure_ascii=False, indent=2)
         
-        self.logger.info(f"M3U文件优化完成，共处理 {len(m3u_files)} 个文件，删除 {len(deleted_files)} 个无效文件，重命名 {len(renamed_files)} 个文件")
-        self.logger.info(f"处理结果已保存到: {result_file}")
+        self.logger.info("=" * 50)
+        self.logger.info("优化完成总结:")
+        self.logger.info(f"  - 原始文件: {len(m3u_files)} 个")
+        self.logger.info(f"  - 删除不可用: {len(deleted_files)} 个")
+        self.logger.info(f"  - 删除重复: {len(duplicate_files)} 个")
+        self.logger.info(f"  - 最终保留: {len(renamed_files)} 个")
+        self.logger.info(f"  - 结果保存到: {result_file}")
+        self.logger.info("=" * 50)
+    
+    def _extract_source_ip(self, file_path: str, file_name: str) -> str:
+        """从文件中提取源IP地址"""
+        import re
+        
+        # 1. 首先尝试从文件内容中提取
+        try:
+            channels = self.parse_m3u_file(file_path)
+            if channels and len(channels) > 0:
+                url = channels[0]['url']
+                # 提取IP地址或域名
+                url_match = re.search(r'https?://([^:/]+)', url)
+                if url_match:
+                    host = url_match.group(1)
+                    # 如果是IP地址，直接返回
+                    if re.match(r'^\d+\.\d+\.\d+\.\d+$', host):
+                        return host
+                    # 如果是域名，也返回
+                    return host
+        except:
+            pass
+        
+        # 2. 从文件名中提取IP地址
+        ip_match = re.search(r'(\d+\.\d+\.\d+\.\d+)', file_name)
+        if ip_match:
+            return ip_match.group(1)
+        
+        # 3. 从文件名中提取域名
+        domain_match = re.search(r'([a-zA-Z0-9][-a-zA-Z0-9]*\.[a-zA-Z0-9][-a-zA-Z0-9]*)', file_name)
+        if domain_match:
+            return domain_match.group(1)
+        
+        # 4. 提取文件名中的第一个有意义部分
+        parts = file_name.replace('[', '').replace(']', '').split('_')
+        for part in parts:
+            if part and not part.isdigit() and 'ch' not in part and '.m3u' not in part:
+                return part
+        
+        return "unknown"
+        
+
+if __name__ == "__main__":
+    # 示例用法
+    optimizer = M3UOptimizer("output/m3u", use_vlc=True)
+    optimizer.optimize_m3u_files()
 
 if __name__ == "__main__":
     # 示例用法

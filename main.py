@@ -80,7 +80,7 @@ def main():
         if vlc_path not in os.environ["PATH"]:
             os.environ["PATH"] += os.pathsep + vlc_path
         
-        # 强制使用VLC测试模式
+        # 使用VLC测试模式（带超时控制）
         optimizer = M3UOptimizer("output/m3u", "output/logs", use_vlc=True)
         optimizer.optimize_m3u_files()
             
@@ -103,7 +103,7 @@ def optimize_only():
     if vlc_path not in os.environ["PATH"]:
         os.environ["PATH"] += os.pathsep + vlc_path
     
-    # 强制使用VLC测试模式
+    # 使用VLC测试模式（带超时控制）
     optimizer = M3UOptimizer("output/m3u", "output/logs", use_vlc=True)
     optimizer.optimize_m3u_files()
 
