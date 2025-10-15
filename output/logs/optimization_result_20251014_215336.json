@@ -1,0 +1,225 @@
+{
+  "timestamp": "2025-10-14T21:53:36.366069",
+  "optimization_steps": {
+    "total_files_found": 30,
+    "valid_files_after_testing": 26,
+    "files_after_deduplication": 20,
+    "final_renamed_files": 20
+  },
+  "deleted_files": [
+    "116.30.248.189_333ch_20251014_组播_可用99%.m3u",
+    "121.237.247.137_276ch_20251014_组播_未检测.m3u",
+    "[08]124.108.6.20_50ch_64%.m3u",
+    "[13]219.131.11.173_333ch_37%.m3u"
+  ],
+  "duplicate_files": [
+    "[05]110.181.232.206_38ch_78%.m3u",
+    "[02]113.233.132.148_102ch_79%.m3u",
+    "[03]124.227.114.236_25ch_80%.m3u",
+    "[04]139.208.186.89_34ch_79%.m3u",
+    "[07]175.22.70.4_37ch_78%.m3u",
+    "[15]183.184.222.87_40ch_30%.m3u"
+  ],
+  "final_files": [
+    {
+      "rank": 1,
+      "old_name": "112.255.139.170_210ch_20251014_组播_可用100%.m3u",
+      "new_name": "[01]112.255.139.170_210ch_80%.m3u",
+      "source_ip": "112.255.139.170",
+      "availability": 0.8,
+      "availability_percent": 80,
+      "avg_speed": 100.0,
+      "channel_count": 210
+    },
+    {
+      "rank": 2,
+      "old_name": "[11]36.136.38.87_94ch_47%.m3u",
+      "new_name": "[02]36.136.38.87_94ch_79%.m3u",
+      "source_ip": "36.136.38.87",
+      "availability": 0.7978723404255319,
+      "availability_percent": 79,
+      "avg_speed": 98.0,
+      "channel_count": 94
+    },
+    {
+      "rank": 3,
+      "old_name": "113.233.132.148_102ch_20251014_酒店_可用98%.m3u",
+      "new_name": "[03]113.233.132.148_102ch_79%.m3u",
+      "source_ip": "113.233.132.148",
+      "availability": 0.7941176470588235,
+      "availability_percent": 79,
+      "avg_speed": 100.0,
+      "channel_count": 102
+    },
+    {
+      "rank": 4,
+      "old_name": "[01]122.141.60.242_102ch_79%.m3u",
+      "new_name": "[04]122.141.60.242_102ch_79%.m3u",
+      "source_ip": "122.141.60.242",
+      "availability": 0.7941176470588235,
+      "availability_percent": 79,
+      "avg_speed": 98.0,
+      "channel_count": 102
+    },
+    {
+      "rank": 5,
+      "old_name": "124.227.114.236_25ch_20251014_酒店_可用100%.m3u",
+      "new_name": "[05]124.227.114.236_25ch_80%.m3u",
+      "source_ip": "124.227.114.236",
+      "availability": 0.8,
+      "availability_percent": 80,
+      "avg_speed": 100.0,
+      "channel_count": 25
+    },
+    {
+      "rank": 6,
+      "old_name": "139.208.186.89_34ch_20251014_酒店_可用100%.m3u",
+      "new_name": "[06]139.208.186.89_34ch_79%.m3u",
+      "source_ip": "139.208.186.89",
+      "availability": 0.7941176470588235,
+      "availability_percent": 79,
+      "avg_speed": 100.0,
+      "channel_count": 34
+    },
+    {
+      "rank": 7,
+      "old_name": "110.181.232.206_38ch_20251014_酒店_可用100%.m3u",
+      "new_name": "[07]110.181.232.206_38ch_78%.m3u",
+      "source_ip": "110.181.232.206",
+      "availability": 0.7894736842105263,
+      "availability_percent": 78,
+      "avg_speed": 100.0,
+      "channel_count": 38
+    },
+    {
+      "rank": 8,
+      "old_name": "[06]123.154.104.19_51ch_78%.m3u",
+      "new_name": "[08]123.154.104.19_51ch_78%.m3u",
+      "source_ip": "123.154.104.19",
+      "availability": 0.7843137254901961,
+      "availability_percent": 78,
+      "avg_speed": 100.0,
+      "channel_count": 51
+    },
+    {
+      "rank": 9,
+      "old_name": "175.22.70.4_37ch_20251014_酒店_可用100%.m3u",
+      "new_name": "[09]175.22.70.4_37ch_78%.m3u",
+      "source_ip": "175.22.70.4",
+      "availability": 0.7837837837837838,
+      "availability_percent": 78,
+      "avg_speed": 100.0,
+      "channel_count": 37
+    },
+    {
+      "rank": 10,
+      "old_name": "123.53.245.242_327ch_20251014_组播_可用100%.m3u",
+      "new_name": "[10]123.53.245.242_327ch_63%.m3u",
+      "source_ip": "123.53.245.242",
+      "availability": 0.6391437308868502,
+      "availability_percent": 63,
+      "avg_speed": 80.0,
+      "channel_count": 327
+    },
+    {
+      "rank": 11,
+      "old_name": "114.243.99.226_145ch_20251014_组播_可用94%.m3u",
+      "new_name": "[11]114.243.99.226_145ch_68%.m3u",
+      "source_ip": "114.243.99.226",
+      "availability": 0.6827586206896552,
+      "availability_percent": 68,
+      "avg_speed": 85.71428571428571,
+      "channel_count": 145
+    },
+    {
+      "rank": 12,
+      "old_name": "171.213.171.14_334ch_20251014_组播_可用99%.m3u",
+      "new_name": "[12]171.213.171.14_334ch_58%.m3u",
+      "source_ip": "171.213.171.14",
+      "availability": 0.5838323353293413,
+      "availability_percent": 58,
+      "avg_speed": 73.33333333333333,
+      "channel_count": 334
+    },
+    {
+      "rank": 13,
+      "old_name": "113.15.109.216_55ch_20251014_酒店_可用94%.m3u",
+      "new_name": "[13]113.15.109.216_55ch_63%.m3u",
+      "source_ip": "113.15.109.216",
+      "availability": 0.6363636363636364,
+      "availability_percent": 63,
+      "avg_speed": 80.0,
+      "channel_count": 55
+    },
+    {
+      "rank": 14,
+      "old_name": "1.31.32.196_162ch_20251014_组播_可用11%.m3u",
+      "new_name": "[14]1.31.32.196_162ch_59%.m3u",
+      "source_ip": "1.31.32.196",
+      "availability": 0.5987654320987654,
+      "availability_percent": 59,
+      "avg_speed": 75.0,
+      "channel_count": 162
+    },
+    {
+      "rank": 15,
+      "old_name": "[10]124.116.183.146_39ch_61%.m3u",
+      "new_name": "[15]124.116.183.146_39ch_61%.m3u",
+      "source_ip": "124.116.183.146",
+      "availability": 0.6153846153846154,
+      "availability_percent": 61,
+      "avg_speed": 78.0,
+      "channel_count": 39
+    },
+    {
+      "rank": 16,
+      "old_name": "171.213.178.27_334ch_20251014_组播_可用99%.m3u",
+      "new_name": "[16]171.213.178.27_334ch_47%.m3u",
+      "source_ip": "171.213.178.27",
+      "availability": 0.47904191616766467,
+      "availability_percent": 47,
+      "avg_speed": 60.0,
+      "channel_count": 334
+    },
+    {
+      "rank": 17,
+      "old_name": "183.184.222.87_40ch_20251014_酒店_可用60%.m3u",
+      "new_name": "[17]183.184.222.87_40ch_47%.m3u",
+      "source_ip": "183.184.222.87",
+      "availability": 0.475,
+      "availability_percent": 47,
+      "avg_speed": 60.0,
+      "channel_count": 40
+    },
+    {
+      "rank": 18,
+      "old_name": "[12]49.234.31.101_811ch_31%.m3u",
+      "new_name": "[18]49.234.31.101_811ch_31%.m3u",
+      "source_ip": "49.234.31.101",
+      "availability": 0.3193588162762022,
+      "availability_percent": 31,
+      "avg_speed": 39.333333333333336,
+      "channel_count": 811
+    },
+    {
+      "rank": 19,
+      "old_name": "[14]1.198.176.212_29ch_44%.m3u",
+      "new_name": "[19]1.198.176.212_29ch_44%.m3u",
+      "source_ip": "1.198.176.212",
+      "availability": 0.4482758620689655,
+      "availability_percent": 44,
+      "avg_speed": 60.0,
+      "channel_count": 29
+    },
+    {
+      "rank": 20,
+      "old_name": "[09]119.164.82.250_45ch_62%.m3u",
+      "new_name": "[20]119.164.82.250_45ch_31%.m3u",
+      "source_ip": "119.164.82.250",
+      "availability": 0.3111111111111111,
+      "availability_percent": 31,
+      "avg_speed": 40.0,
+      "channel_count": 45
+    }
+  ]
+}

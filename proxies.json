@@ -1,0 +1,15 @@
+{
+  "proxies": [],
+  "update_urls": [
+    "https://www.proxy-list.download/api/v1/get?type=http",
+    "https://api.proxyscrape.com/v2/?request=getproxies&protocol=http",
+    "https://raw.githubusercontent.com/TheSpeedX/PROXY-List/master/http.txt"
+  ],
+  "config": {
+    "max_proxies": 50,
+    "min_speed": 50,
+    "min_uptime": 80,
+    "test_url": "https://tonkiang.us",
+    "timeout": 10
+  }
+}

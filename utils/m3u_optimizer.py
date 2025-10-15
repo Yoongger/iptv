@@ -124,68 +124,18 @@ class M3UOptimizer:
                         continue
                 i += 1
                 
-            # 改进的频道名称排序（统一返回列表类型）
-            def natural_sort_key(s):
-                import re
-                import pypinyin
-                name = s['name']
-                
-                # 标准化频道名称格式（统一为CCTV-数字格式）
-                name = re.sub(r'CCTV[- ]?(\d+)', r'CCTV-\1', name)
-                
-                # 特殊处理CCTV频道
-                if name.startswith('CCTV'):
-                    # 处理带有"+"号的CCTV频道（如CCTV-5+）
-                    plus_match = re.search(r'CCTV-(\d+)\+', name)
-                    if plus_match:
-                        # 带"+"号的频道排在对应数字频道之后
-                        return ['CCTV', int(plus_match.group(1)), 1]
-                    
-                    # 提取数字部分
-                    num_match = re.search(r'CCTV-(\d+)', name)
-                    if num_match:
-                        return ['CCTV', int(num_match.group(1)), 0]
-                    
-                    # 处理无数字的CCTV频道（如"CCTV综合"）
-                    return ['CCTV', 0, name]
-                
-                # 处理其他常见电视台命名模式（如卫视频道）
-                for prefix in ['北京', '东方', '湖南', '江苏', '浙江']:
-                    if name.startswith(prefix):
-                        return [prefix, name]
-                
-                # 处理卫视频道
-                if '卫视' in name:
-                    province = name.split('卫视')[0]
-                    return [province, '卫视']
-                
-                # 检查是否为中文频道名称
-                if re.search(r'[\u4e00-\u9fff]', name):
-                    # 中文频道按拼音升序排列
-                    pinyin_list = pypinyin.lazy_pinyin(name)
-                    pinyin_str = ''.join(pinyin_list)
-                    
-                    # 处理中文名称中的数字（自然数排序）
-                    def convert(text):
-                        return int(text) if text.isdigit() else text.lower()
-                    
-                    # 将拼音和数字混合排序
-                    return [convert(c) for c in re.split('([0-9]+)', pinyin_str)]
-                else:
-                    # 英文频道按字母升序，数字按自然数排序
-                    def convert(text):
-                        return int(text) if text.isdigit() else text.lower()
-                    return [convert(c) for c in re.split('([0-9]+)', name)]
-            
-            # 先标准化频道名称格式
+            # 标准化所有频道名称格式
             for channel in channels:
-                channel['name'] = re.sub(r'CCTV[- ]?(\d+)', r'CCTV-\1', channel['name'])
+                channel['name'] = self._standardize_channel_name(channel['name'])
             
-            # 排序并记录排序后的频道名称
-            channels.sort(key=natural_sort_key)
-            self.logger.debug("排序后的前10个频道:")
-            for i, channel in enumerate(channels[:10]):
-                self.logger.debug(f"{i+1}. {channel['name']}")
+            # 使用统一的自然排序算法
+            channels.sort(key=self._natural_sort_key)
+            
+            # 记录排序结果
+            self.logger.info(f"解析完成，共 {len(channels)} 个频道")
+            self.logger.info("排序后的前20个频道:")
+            for i, channel in enumerate(channels[:20]):
+                self.logger.info(f"{i+1:2d}. {channel['name']}")
             return channels
             
         except Exception as e:
@@ -193,15 +143,15 @@ class M3UOptimizer:
             return []
     
     def get_test_channels(self, channels: List[Dict]) -> List[Dict]:
-        """智能抽样策略
+        """智能抽样策略（修复卡顿版本）
         Args:
             channels: 频道列表
         Returns:
             测试频道样本
         """
         import random
-        # 动态样本量 (5-15个，大列表适当增加)
-        sample_size = min(max(5, len(channels)//20), 15)
+        # 限制最大样本量，避免过多测试导致卡顿
+        sample_size = min(max(3, len(channels)//30), 8)  # 减少样本量
         
         # 按频道类型分组抽样
         groups = {
@@ -275,6 +225,80 @@ class M3UOptimizer:
         
         return max(0, min(100, base_score + stability_bonus - buffer_penalty))
 
+    def _test_single_channel_safe(self, channel: Dict) -> Tuple[float, bool]:
+        """安全测试单个频道（优先使用VLC实测速度）
+        
+        Args:
+            channel: 频道信息
+            
+        Returns:
+            (评分, 是否可用)
+        """
+        try:
+            if self.use_vlc:
+                # 使用更安全的VLC测试方法
+                import threading
+                from queue import Queue
+                
+                result_queue = Queue()
+                
+                def vlc_test_thread():
+                    try:
+                        vlc_result = self.vlc_tester.test_stream(channel['url'])
+                        result_queue.put(('success', vlc_result))
+                    except Exception as e:
+                        result_queue.put(('error', str(e)))
+                
+                # 启动测试线程
+                test_thread = threading.Thread(target=vlc_test_thread)
+                test_thread.daemon = True
+                test_thread.start()
+                
+                # 等待结果，设置超时
+                test_thread.join(timeout=self.timeout)
+                
+                if not result_queue.empty():
+                    status, result = result_queue.get()
+                    if status == 'success':
+                        if isinstance(result, str) and 'success' in result.lower():
+                            return 85.0, True  # 提高VLC测试的基础分数
+                        elif isinstance(result, dict) and result.get('available', False):
+                            # 使用VLC实测的缓冲时间和稳定性作为主要评分依据
+                            buffer_time = result.get('buffer_time', 10)
+                            stability = result.get('stability', 0)
+                            score = result.get('score', 0.7)
+                            
+                            # 缓冲时间越短，分数越高（缓冲时间在1-10秒范围内）
+                            buffer_score = max(0, 1 - (buffer_time - 1) / 9) * 100
+                            
+                            # 稳定性越高，分数越高
+                            stability_score = stability * 100
+                            
+                            # 综合评分：缓冲时间权重60%，稳定性权重40%
+                            vlc_score = buffer_score * 0.6 + stability_score * 0.4
+                            return min(vlc_score, 100), True
+                else:
+                    # 超时或线程异常
+                    self.logger.warning(f"频道 {channel['name']} VLC测试超时")
+                    return 0.0, False
+                    
+                return 0.0, False
+            else:
+                # HTTP测试模式（备用方案）
+                result = self.speed_tester.enhanced_test(channel['url'])
+                if result['success']:
+                    fluency_score = self.calculate_fluency_score({
+                        'latency': result.get('latency', 0),
+                        'stability': result.get('stability', 0),
+                        'buffer_events': result.get('buffer_events', 0)
+                    })
+                    return fluency_score * 0.8, True  # HTTP测试分数打8折
+                else:
+                    return 0.0, False
+        except Exception as e:
+            self.logger.debug(f"频道 {channel['name']} 测试异常: {e}")
+            return 0.0, False
+
     def test_m3u_file(self, file_path: str) -> Tuple[bool, float, int, int]:
         """测试M3U文件的可用性和流畅度评分
         
@@ -296,81 +320,34 @@ class M3UOptimizer:
         valid_count = 0
         total_score = 0
         
-        # 智能抽样测试频道
+        # 智能抽样测试频道（限制最大测试数量避免卡顿）
         test_channels = self.get_test_channels(channels)
+        max_test_channels = min(len(test_channels), 8)  # 限制最多测试8个频道
+        test_channels = test_channels[:max_test_channels]
+        
         self.logger.info(f"将通过智能抽样测试 {len(test_channels)}/{len(channels)} 个频道")
         
-        for channel in test_channels:
-            if self.use_vlc:
-                # 使用VLC进行实际流媒体测试（添加超时控制）
-                self.logger.info(f"正在使用VLC测试频道: {channel['name']}")
+        # 使用线程池进行并发测试，避免阻塞
+        with concurrent.futures.ThreadPoolExecutor(max_workers=min(3, len(test_channels))) as executor:
+            # 提交测试任务
+            future_to_channel = {
+                executor.submit(self._test_single_channel_safe, channel): channel 
+                for channel in test_channels
+            }
+            
+            # 收集结果，设置超时避免无限等待
+            for future in concurrent.futures.as_completed(future_to_channel, timeout=self.timeout * len(test_channels)):
+                channel = future_to_channel[future]
                 try:
-                    # 直接调用VLC测试，不使用线程池
-                    vlc_result = self.vlc_tester.test_stream(channel['url'])
-                    
-                    # 正确处理VLC测试结果
-                    if isinstance(vlc_result, str):
-                        if vlc_result == 'success':
-                            # VLC测试成功
-                            valid_count += 1
-                            score = 75  # 给VLC成功测试一个合理的评分
-                            scores.append(score)
-                            self.logger.debug(f"频道 {channel['name']} VLC测试成功: 评分={score:.2f}")
-                        else:
-                            # VLC测试失败
-                            scores.append(0)
-                            self.logger.debug(f"频道 {channel['name']} VLC测试失败: {vlc_result}")
-                    elif isinstance(vlc_result, dict):
-                        if vlc_result.get('available', False):
-                            valid_count += 1
-                            score = vlc_result.get('score', 0.7) * 100
-                            scores.append(score)
-                            self.logger.debug(f"频道 {channel['name']} 测试成功: 评分={score:.2f}")
-                        else:
-                            scores.append(0)
-                            error_msg = vlc_result.get('error', '未知错误')
-                            self.logger.debug(f"频道 {channel['name']} 测试失败: {error_msg}")
-                    else:
-                        scores.append(0)
-                        self.logger.debug(f"频道 {channel['name']} 测试返回意外格式: {type(vlc_result)}")
-                        
-                except Exception as e:
-                    # 特殊处理：VLC测试器有时会抛出包含'success'的异常
-                    error_str = str(e)
-                    if 'success' in error_str.lower():
-                        # 这实际上是测试成功的情况
+                    score, is_valid = future.result(timeout=self.timeout)
+                    scores.append(score)
+                    if is_valid:
                         valid_count += 1
-                        score = 75  # 给一个合理的评分
-                        scores.append(score)
-                        self.logger.debug(f"频道 {channel['name']} VLC测试成功（从异常中识别）: 评分={score:.2f}")
-                    else:
-                        scores.append(0)
-                        self.logger.debug(f"频道 {channel['name']} 测试异常: {e}")
-                                
-            else:
-                # HTTP测试模式增强版
-                try:
-                    result = self.speed_tester.enhanced_test(channel['url'])
-                    
-                    if result['success']:
-                        # 使用多维度评分算法
-                        fluency_score = self.calculate_fluency_score({
-                            'latency': result.get('latency', 0),
-                            'stability': result.get('stability', 0),
-                            'buffer_events': result.get('buffer_events', 0)
-                        })
-                        
-                        scores.append(fluency_score)
-                        valid_count += 1
-                        self.logger.info(
-                            f"频道 {channel['name']} 预估流畅度: {fluency_score:.1f} "
-                            f"(延迟: {result['latency']}ms, "
-                            f"稳定性: {result['stability']:.2f})"
-                        )
-                    else:
-                        scores.append(0)
+                except concurrent.futures.TimeoutError:
+                    self.logger.warning(f"频道 {channel['name']} 测试超时")
+                    scores.append(0)
                 except Exception as e:
-                    self.logger.error(f"HTTP测试频道 {channel['name']} 时出错: {e}")
+                    self.logger.error(f"频道 {channel['name']} 测试出错: {e}")
                     scores.append(0)
         
         # 计算最终结果 - 修复抽样测试逻辑
@@ -448,63 +425,18 @@ class M3UOptimizer:
             是否成功保存
         """
         try:
-            # 使用自然排序算法对频道进行排序
-            def natural_sort_key(s):
-                import re
-                import pypinyin
-                name = s['name']
-                
-                # 特殊处理CCTV频道
-                if name.startswith('CCTV'):
-                    # 处理带有"+"号的CCTV频道（如CCTV-5+）
-                    plus_match = re.search(r'CCTV[- ]?(\d+)\+', name)
-                    if plus_match:
-                        # 带"+"号的频道排在对应数字频道之后
-                        return ['CCTV', int(plus_match.group(1)), 1]
-                    
-                    # 提取数字部分，支持多种格式：CCTV1, CCTV-1, CCTV 1
-                    num_match = re.search(r'CCTV[- ]?(\d+)', name)
-                    if num_match:
-                        return ['CCTV', int(num_match.group(1)), 0]
-                    
-                    # 处理无数字的CCTV频道（如"CCTV综合"）
-                    return ['CCTV', 0, name]
-                
-                # 处理其他常见电视台命名模式（如卫视频道）
-                for prefix in ['北京', '东方', '湖南', '江苏', '浙江']:
-                    if name.startswith(prefix):
-                        return [prefix, name]
-                
-                # 处理卫视频道
-                if '卫视' in name:
-                    province = name.split('卫视')[0]
-                    return [province, '卫视']
-                
-                # 检查是否为中文频道名称
-                if re.search(r'[\u4e00-\u9fff]', name):
-                    # 中文频道按拼音升序排列
-                    pinyin_list = pypinyin.lazy_pinyin(name)
-                    pinyin_str = ''.join(pinyin_list)
-                    
-                    # 处理中文名称中的数字（自然数排序）
-                    def convert(text):
-                        return int(text) if text.isdigit() else text.lower()
-                    
-                    # 将拼音和数字混合排序
-                    return [convert(c) for c in re.split('([0-9]+)', pinyin_str)]
-                else:
-                    # 英文频道按字母升序，数字按自然数排序
-                    def convert(text):
-                        return int(text) if text.isdigit() else text.lower()
-                    return [convert(c) for c in re.split('([0-9]+)', name)]
+            # 首先标准化所有频道名称格式
+            for channel in channels:
+                channel['name'] = self._standardize_channel_name(channel['name'])
             
-            # 使用自然排序算法排序
-            sorted_channels = sorted(channels, key=natural_sort_key)
+            # 使用统一的自然排序算法
+            sorted_channels = sorted(channels, key=self._natural_sort_key)
             
-            # 调试日志：输出排序后的前10个频道
-            self.logger.debug("排序后的前10个频道:")
-            for i, channel in enumerate(sorted_channels[:10]):
-                self.logger.debug(f"{i+1}. {channel['name']}")
+            # 详细记录排序结果
+            self.logger.info(f"频道排序完成，共 {len(sorted_channels)} 个频道")
+            self.logger.info("排序后的前20个频道:")
+            for i, channel in enumerate(sorted_channels[:20]):
+                self.logger.info(f"{i+1:2d}. {channel['name']}")
             
             with open(file_path, 'w', encoding='utf-8') as f:
                 # 写入M3U头部
@@ -615,8 +547,8 @@ class M3UOptimizer:
         
         for ip, files in ip_groups.items():
             if len(files) > 1:
-                # 按综合质量排序：可用率 * 0.7 + 速度 * 0.3
-                files.sort(key=lambda x: (x['availability'] * 0.7 + min(x['avg_speed']/10, 1) * 0.3), reverse=True)
+                # 按综合质量排序：速度 * 0.7 + 可用率 * 0.3（速度优先）
+                files.sort(key=lambda x: (min(x['avg_speed']/10, 1) * 0.7 + x['availability'] * 0.3), reverse=True)
                 best_file = files[0]
                 deduplicated_files.append(best_file)
                 
@@ -638,16 +570,16 @@ class M3UOptimizer:
         self.logger.info("第三步：质量排序")
         self.logger.info("=" * 50)
         
-        # 综合评分排序：可用率 * 0.6 + 速度 * 0.3 + 频道数量 * 0.1
+        # 综合评分排序：速度 * 0.7 + 可用率 * 0.2 + 频道数量 * 0.1（速度优先）
         deduplicated_files.sort(key=lambda x: (
-            x['availability'] * 0.6 + 
-            min(x['avg_speed']/10, 1) * 0.3 + 
+            min(x['avg_speed']/10, 1) * 0.7 + 
+            x['availability'] * 0.2 + 
             min(x['total_count']/500, 1) * 0.1
         ), reverse=True)
         
-        # 第四步：统一重命名
+        # 第四步：频道排序和统一重命名
         self.logger.info("=" * 50)
-        self.logger.info("第四步：统一重命名")
+        self.logger.info("第四步：频道排序和统一重命名")
         self.logger.info("=" * 50)
         
         renamed_files = []
@@ -655,36 +587,45 @@ class M3UOptimizer:
             rank = i + 1
             source_ip = file_info['source_ip']
             channel_count = file_info['total_count']
+            availability_percent = int(file_info['availability'] * 100)  # 转换为百分比整数
             
-            # 统一命名格式：[序号]IP_频道数ch.m3u
-            new_name = f"[{rank:02d}]{source_ip}_{channel_count}ch.m3u"
+            # 统一命名格式：[序号]IP_频道数ch_可用百分数%.m3u
+            new_name = f"[{rank:02d}]{source_ip}_{channel_count}ch_{availability_percent}%.m3u"
             new_path = os.path.join(self.m3u_dir, new_name)
             old_path = file_info['file_path']
             
             try:
-                # 如果新旧路径不同，进行重命名
-                if new_path != old_path:
-                    # 如果目标文件已存在，先删除
-                    if os.path.exists(new_path):
-                        os.remove(new_path)
+                # 首先对文件中的频道进行排序
+                channels = self.parse_m3u_file(old_path)
+                if channels:
+                    # 保存排序后的频道到新文件
+                    self.save_sorted_m3u_file(new_path, channels)
                     
-                    # 重命名文件
-                    os.rename(old_path, new_path)
-                    
+                    # 如果新旧路径不同且不是同一个文件，删除旧文件
+                    if new_path != old_path and os.path.exists(old_path):
+                        os.remove(old_path)
+                else:
+                    # 如果解析失败，直接重命名
+                    if new_path != old_path:
+                        if os.path.exists(new_path):
+                            os.remove(new_path)
+                        os.rename(old_path, new_path)
+                
                 renamed_files.append({
                     'rank': rank,
                     'old_name': file_info['file_name'],
                     'new_name': new_name,
                     'source_ip': source_ip,
                     'availability': file_info['availability'],
+                    'availability_percent': availability_percent,
                     'avg_speed': file_info['avg_speed'],
                     'channel_count': channel_count
                 })
                 
-                self.logger.info(f"[{rank:02d}] {file_info['file_name']} -> {new_name} (可用率: {file_info['availability']:.1%}, 速度: {file_info['avg_speed']:.2f})")
+                self.logger.info(f"[{rank:02d}] {file_info['file_name']} -> {new_name} (可用率: {availability_percent}%, 速度: {file_info['avg_speed']:.2f})")
                 
             except Exception as e:
-                self.logger.error(f"重命名文件 {file_info['file_name']} 失败: {e}")
+                self.logger.error(f"处理文件 {file_info['file_name']} 失败: {e}")
         
         # 保存优化结果
         result_summary = {
@@ -751,6 +692,97 @@ class M3UOptimizer:
                 return part
         
         return "unknown"
+    
+    def _standardize_channel_name(self, name: str) -> str:
+        """标准化频道名称格式
+        
+        Args:
+            name: 原始频道名称
+            
+        Returns:
+            标准化后的频道名称
+        """
+        import re
+        
+        # 统一CCTV频道格式：CCTV1 -> CCTV-1, CCTV 1 -> CCTV-1
+        name = re.sub(r'CCTV[- ]?(\d+)', r'CCTV-\1', name)
+        
+        # 统一卫视频道格式：湖南卫视 -> 湖南卫视
+        name = re.sub(r'([\u4e00-\u9fff]+)卫视', r'\1卫视', name)
+        
+        # 去除多余空格
+        name = re.sub(r'\s+', ' ', name).strip()
+        
+        return name
+    
+    def _natural_sort_key(self, channel: Dict) -> tuple:
+        """增强的自然排序键函数，遵循既定排序规则
+        
+        排序优先级：
+        1. 频道类型优先级：CCTV > 卫视 > 地方台 > 英文频道 > 中文频道 > 混合频道
+        2. 自然数排序：1, 2, 10, 11
+        3. 拼音排序：中文频道按拼音排序
+        
+        Args:
+            channel: 频道信息字典
+            
+        Returns:
+            排序键元组 (类型优先级, 拼音/字母键, 数字键)
+        """
+        import re
+        import pypinyin
+        
+        name = channel['name']
+        
+        # 1. 确定频道类型优先级
+        if name.startswith('CCTV'):
+            priority = 1  # CCTV频道最高优先级
+        elif '卫视' in name:
+            priority = 2  # 卫视频道
+        elif re.search(r'[\u4e00-\u9fff]', name) and not name.startswith('CCTV'):
+            # 中文频道（非CCTV）
+            if any(keyword in name for keyword in ['新闻', '综合', '公共', '都市', '影视']):
+                priority = 3  # 地方台/专业频道
+            else:
+                priority = 5  # 普通中文频道
+        elif re.match(r'^[A-Za-z]', name):
+            priority = 4  # 英文频道
+        else:
+            priority = 6  # 混合频道
+        
+        # 2. 提取数字部分用于自然数排序
+        numbers = re.findall(r'\d+', name)
+        first_number = int(numbers[0]) if numbers else float('inf')
+        
+        # 3. 处理排序键
+        if priority == 1:  # CCTV频道
+            # 提取CCTV数字
+            num_match = re.search(r'CCTV[- ]?(\d+)', name)
+            if num_match:
+                cctv_num = int(num_match.group(1))
+                plus_suffix = 1 if '+' in name else 0  # 带+号的排在后面
+                return (priority, cctv_num, plus_suffix, name)
+            else:
+                return (priority, float('inf'), 0, name)
+                
+        elif priority == 2:  # 卫视频道
+            province = name.split('卫视')[0]
+            pinyin_key = ''.join(pypinyin.lazy_pinyin(province))
+            return (priority, pinyin_key, first_number, name)
+            
+        elif priority in [3, 5]:  # 中文频道
+            pinyin_key = ''.join(pypinyin.lazy_pinyin(name))
+            return (priority, pinyin_key, first_number, name)
+            
+        elif priority == 4:  # 英文频道
+            # 英文频道按字母排序，数字按自然数排序
+            def convert(text):
+                return int(text) if text.isdigit() else text.lower()
+            alpha_key = [convert(c) for c in re.split('([0-9]+)', name)]
+            return (priority, alpha_key, first_number, name)
+            
+        else:  # 混合频道
+            return (priority, name.lower(), first_number, name)
         
 
 if __name__ == "__main__":

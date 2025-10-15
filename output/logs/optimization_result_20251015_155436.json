@@ -1,0 +1,65 @@
+{
+  "timestamp": "2025-10-15T15:54:36.086009",
+  "optimization_steps": {
+    "total_files_found": 6,
+    "valid_files_after_testing": 5,
+    "files_after_deduplication": 5,
+    "final_renamed_files": 5
+  },
+  "deleted_files": [
+    "[03]219.155.204.119_172ch_63%.m3u"
+  ],
+  "duplicate_files": [],
+  "final_files": [
+    {
+      "rank": 1,
+      "old_name": "[01]121.29.90.150_313ch_69%.m3u",
+      "new_name": "[01]121.29.90.150_313ch_79%.m3u",
+      "source_ip": "121.29.90.150",
+      "availability": 0.7987220447284346,
+      "availability_percent": 79,
+      "avg_speed": 100.0,
+      "channel_count": 313
+    },
+    {
+      "rank": 2,
+      "old_name": "[06]ik6.iptv8.net_172ch_31%.m3u",
+      "new_name": "[02]ik6.iptv8.net_172ch_79%.m3u",
+      "source_ip": "ik6.iptv8.net",
+      "availability": 0.7965116279069767,
+      "availability_percent": 79,
+      "avg_speed": 100.0,
+      "channel_count": 172
+    },
+    {
+      "rank": 3,
+      "old_name": "[02]27.223.142.159_105ch_80%.m3u",
+      "new_name": "[03]27.223.142.159_105ch_53%.m3u",
+      "source_ip": "27.223.142.159",
+      "availability": 0.5333333333333333,
+      "availability_percent": 53,
+      "avg_speed": 66.66666666666667,
+      "channel_count": 105
+    },
+    {
+      "rank": 4,
+      "old_name": "[05]59.174.160.155_102ch_52%.m3u",
+      "new_name": "[04]59.174.160.155_102ch_52%.m3u",
+      "source_ip": "59.174.160.155",
+      "availability": 0.5294117647058824,
+      "availability_percent": 52,
+      "avg_speed": 66.66666666666667,
+      "channel_count": 102
+    },
+    {
+      "rank": 5,
+      "old_name": "[04]221.15.95.137_172ch_47%.m3u",
+      "new_name": "[05]221.15.95.137_172ch_31%.m3u",
+      "source_ip": "221.15.95.137",
+      "availability": 0.31976744186046513,
+      "availability_percent": 31,
+      "avg_speed": 40.0,
+      "channel_count": 172
+    }
+  ]
+}

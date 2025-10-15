@@ -7,6 +7,7 @@ from crawler.ip_crawler import IPCrawler
 from crawler.channel_crawler import ChannelCrawler
 from utils.m3u_processor import M3UProcessor
 from utils.m3u_optimizer import M3UOptimizer
+from utils.stability_tester import M3UStabilityTester
 from config.logger import setup_logger
 import json
 import os
@@ -14,13 +15,8 @@ import glob
 import time
 import argparse
 
-def main():
-    """主函数"""
-    # 解析命令行参数
-    parser = argparse.ArgumentParser(description='IPTV频道爬取和优化工具')
-    parser.add_argument('--optimize-only', action='store_true', help='仅执行M3U文件优化，不爬取新数据')
-    args = parser.parse_args()
-    
+def run_single_cycle():
+    """执行单次爬取和优化"""
     logger = setup_logger("IPTV爬虫", "iptv_crawler.log")
     
     try:
@@ -83,13 +79,39 @@ def main():
         # 使用VLC测试模式（带超时控制）
         optimizer = M3UOptimizer("output/m3u", "output/logs", use_vlc=True)
         optimizer.optimize_m3u_files()
+        
+        # 执行稳定性测试
+        logger.info("开始执行M3U文件稳定性测试...")
+        print("开始执行M3U文件稳定性测试...")
+        
+        try:
+            stability_tester = M3UStabilityTester("output/m3u", test_interval_hours=6)
+            results = stability_tester.test_all_files()
+            
+            if results:
+                # 选择最优文件并保存为固定文件名
+                best_file = stability_tester.select_and_save_best_file(results, "best_stable_channels.m3u")
+                if best_file:
+                    logger.info(f"稳定性测试完成，推荐最优文件: {os.path.basename(best_file.file_path)}")
+                    print(f"🎯 稳定性测试完成，推荐最优文件: {os.path.basename(best_file.file_path)}")
+                    print(f"💾 最优文件已保存为: best_stable_channels.m3u")
+                else:
+                    logger.warning("稳定性测试未能选择出最优文件或保存失败")
+                    print("⚠️ 稳定性测试未能选择出最优文件或保存失败")
+            else:
+                logger.warning("稳定性测试未找到可用文件")
+                print("⚠️ 稳定性测试未找到可用文件")
+                
+        except Exception as stability_error:
+            logger.error(f"稳定性测试出错: {stability_error}")
+            print(f"❌ 稳定性测试出错: {stability_error}")
             
     except Exception as e:
         logger.error(f"爬取过程中发生错误: {e}")
         print(f"错误: {e}")
 
-def optimize_only():
-    """仅执行M3U文件优化"""
+def run_cycle_with_optimize_only():
+    """仅执行M3U文件优化的单次运行"""
     logger = setup_logger("M3U优化", "m3u_optimizer.log")
     logger.info("仅执行M3U文件优化模式")
     print("仅执行M3U文件优化模式")
@@ -106,13 +128,80 @@ def optimize_only():
     # 使用VLC测试模式（带超时控制）
     optimizer = M3UOptimizer("output/m3u", "output/logs", use_vlc=True)
     optimizer.optimize_m3u_files()
+    
+    # 执行稳定性测试
+    logger.info("开始执行M3U文件稳定性测试...")
+    print("开始执行M3U文件稳定性测试...")
+    
+    try:
+        stability_tester = M3UStabilityTester("output/m3u", test_interval_hours=6)
+        results = stability_tester.test_all_files()
+        
+        if results:
+            # 选择最优文件并保存为固定文件名
+            best_file = stability_tester.select_and_save_best_file(results, "best_stable_channels.m3u")
+            if best_file:
+                logger.info(f"稳定性测试完成，推荐最优文件: {os.path.basename(best_file.file_path)}")
+                print(f"🎯 稳定性测试完成，推荐最优文件: {os.path.basename(best_file.file_path)}")
+                print(f"💾 最优文件已保存为: best_stable_channels.m3u")
+            else:
+                logger.warning("稳定性测试未能选择出最优文件或保存失败")
+                print("⚠️ 稳定性测试未能选择出最优文件或保存失败")
+        else:
+            logger.warning("稳定性测试未找到可用文件")
+            print("⚠️ 稳定性测试未找到可用文件")
+            
+    except Exception as stability_error:
+        logger.error(f"稳定性测试出错: {stability_error}")
+        print(f"❌ 稳定性测试出错: {stability_error}")
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description='IPTV频道爬取和优化工具')
     parser.add_argument('--optimize-only', action='store_true', help='仅执行M3U文件优化，不爬取新数据')
+    parser.add_argument('--hours', type=int, default=0, help='循环运行的小时数，0表示只运行一次')
+    parser.add_argument('--interval', type=int, default=60, help='每次运行的间隔时间（分钟），默认60分钟')
     args = parser.parse_args()
     
-    if args.optimize_only:
-        optimize_only()
+    if args.hours == 0:
+        # 单次运行
+        if args.optimize_only:
+            run_cycle_with_optimize_only()
+        else:
+            run_single_cycle()
     else:
-        main()
+        # 循环运行
+        total_cycles = args.hours
+        interval_minutes = args.interval
+        current_cycle = 1
+        
+        print(f"开始循环运行，总时长: {total_cycles}小时，间隔: {interval_minutes}分钟")
+        
+        while current_cycle <= total_cycles:
+            print(f"\n=== 第 {current_cycle}/{total_cycles} 次运行 ===")
+            print(f"开始时间: {time.strftime('%Y-%m-%d %H:%M:%S')}")
+            
+            try:
+                if args.optimize_only:
+                    run_cycle_with_optimize_only()
+                else:
+                    run_single_cycle()
+                    
+                print(f"第 {current_cycle} 次运行完成")
+                
+                # 如果不是最后一次运行，则等待
+                if current_cycle < total_cycles:
+                    wait_seconds = interval_minutes * 60
+                    print(f"等待 {interval_minutes} 分钟后继续...")
+                    time.sleep(wait_seconds)
+                    
+            except Exception as e:
+                print(f"第 {current_cycle} 次运行出错: {e}")
+                # 出错后等待一段时间再继续
+                if current_cycle < total_cycles:
+                    wait_seconds = interval_minutes * 60
+                    print(f"出错后等待 {interval_minutes} 分钟后继续...")
+                    time.sleep(wait_seconds)
+            
+            current_cycle += 1
+        
+        print(f"\n循环运行完成！总运行次数: {total_cycles}")

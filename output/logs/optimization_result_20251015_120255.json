@@ -1,0 +1,195 @@
+{
+  "timestamp": "2025-10-15T12:02:55.087336",
+  "optimization_steps": {
+    "total_files_found": 45,
+    "valid_files_after_testing": 17,
+    "files_after_deduplication": 15,
+    "final_renamed_files": 15
+  },
+  "deleted_files": [
+    "113.116.198.24_24ch_20251014_酒店_可用83%.m3u",
+    "113.116.198.24_24ch_20251015_酒店_可用87%.m3u",
+    "116.179.187.106_47ch_20251015_酒店_可用100%.m3u",
+    "119.164.82.250_45ch_20251015_酒店_可用31%.m3u",
+    "124.227.114.236_25ch_20251014_酒店_可用100%.m3u",
+    "124.227.114.236_25ch_20251015_酒店_可用100%.m3u",
+    "125.123.26.58_319ch_20251015_组播_可用98%.m3u",
+    "139.208.186.89_34ch_20251014_酒店_可用100%.m3u",
+    "139.208.186.89_34ch_20251015_酒店_可用100%.m3u",
+    "171.213.171.14_334ch_20251015_组播_可用99%.m3u",
+    "171.38.192.53_85ch_20251015_酒店_未检测.m3u",
+    "27.189.127.194_310ch_20251014_组播_可用99%.m3u",
+    "[01]112.255.139.170_210ch_80%.m3u",
+    "[02]36.136.38.87_94ch_79%.m3u",
+    "[03]113.233.132.148_102ch_79%.m3u",
+    "[05]124.227.114.236_25ch_80%.m3u",
+    "[06]139.208.186.89_34ch_79%.m3u",
+    "[07]110.181.232.206_38ch_78%.m3u",
+    "[08]123.154.104.19_51ch_78%.m3u",
+    "[11]114.243.99.226_145ch_68%.m3u",
+    "[12]171.213.171.14_334ch_58%.m3u",
+    "[13]113.15.109.216_55ch_63%.m3u",
+    "[14]1.31.32.196_162ch_59%.m3u",
+    "[15]124.116.183.146_39ch_61%.m3u",
+    "[17]183.184.222.87_40ch_47%.m3u",
+    "[18]49.234.31.101_811ch_31%.m3u",
+    "[19]1.198.176.212_29ch_44%.m3u",
+    "[20]119.164.82.250_45ch_31%.m3u"
+  ],
+  "duplicate_files": [
+    "1.198.176.212_29ch_20251015_酒店_可用72%.m3u",
+    "[10]123.53.245.242_327ch_63%.m3u"
+  ],
+  "final_files": [
+    {
+      "rank": 1,
+      "old_name": "123.53.245.242_327ch_20251014_组播_可用100%.m3u",
+      "new_name": "[01]123.53.245.242_327ch_79%.m3u",
+      "source_ip": "123.53.245.242",
+      "availability": 0.7981651376146789,
+      "availability_percent": 79,
+      "avg_speed": 100.0,
+      "channel_count": 327
+    },
+    {
+      "rank": 2,
+      "old_name": "ik6.iptv8.net_172ch_20251015_组播_可用99%.m3u",
+      "new_name": "[02]ik6.iptv8.net_172ch_79%.m3u",
+      "source_ip": "ik6.iptv8.net",
+      "availability": 0.7965116279069767,
+      "availability_percent": 79,
+      "avg_speed": 100.0,
+      "channel_count": 172
+    },
+    {
+      "rank": 3,
+      "old_name": "59.174.160.155_102ch_20251014_组播_可用100%.m3u",
+      "new_name": "[03]59.174.160.155_102ch_79%.m3u",
+      "source_ip": "59.174.160.155",
+      "availability": 0.7941176470588235,
+      "availability_percent": 79,
+      "avg_speed": 100.0,
+      "channel_count": 102
+    },
+    {
+      "rank": 4,
+      "old_name": "110.72.67.190_93ch_20251014_酒店_可用92%.m3u",
+      "new_name": "[04]110.72.67.190_93ch_79%.m3u",
+      "source_ip": "110.72.67.190",
+      "availability": 0.7956989247311828,
+      "availability_percent": 79,
+      "avg_speed": 100.0,
+      "channel_count": 93
+    },
+    {
+      "rank": 5,
+      "old_name": "121.29.90.150_313ch_20251015_组播_可用100%.m3u",
+      "new_name": "[05]121.29.90.150_313ch_69%.m3u",
+      "source_ip": "121.29.90.150",
+      "availability": 0.6996805111821086,
+      "availability_percent": 69,
+      "avg_speed": 87.5,
+      "channel_count": 313
+    },
+    {
+      "rank": 6,
+      "old_name": "1.198.176.212_29ch_20251014_酒店_可用72%.m3u",
+      "new_name": "[06]1.198.176.212_29ch_79%.m3u",
+      "source_ip": "1.198.176.212",
+      "availability": 0.7931034482758621,
+      "availability_percent": 79,
+      "avg_speed": 100.0,
+      "channel_count": 29
+    },
+    {
+      "rank": 7,
+      "old_name": "[16]171.213.178.27_334ch_47%.m3u",
+      "new_name": "[07]171.213.178.27_334ch_59%.m3u",
+      "source_ip": "171.213.178.27",
+      "availability": 0.5988023952095808,
+      "availability_percent": 59,
+      "avg_speed": 75.0,
+      "channel_count": 334
+    },
+    {
+      "rank": 8,
+      "old_name": "27.223.142.159_105ch_20251014_组播_可用100%.m3u",
+      "new_name": "[08]27.223.142.159_105ch_53%.m3u",
+      "source_ip": "27.223.142.159",
+      "availability": 0.5333333333333333,
+      "availability_percent": 53,
+      "avg_speed": 66.66666666666667,
+      "channel_count": 105
+    },
+    {
+      "rank": 9,
+      "old_name": "[04]122.141.60.242_102ch_79%.m3u",
+      "new_name": "[09]122.141.60.242_102ch_52%.m3u",
+      "source_ip": "122.141.60.242",
+      "availability": 0.5294117647058824,
+      "availability_percent": 52,
+      "avg_speed": 66.66666666666667,
+      "channel_count": 102
+    },
+    {
+      "rank": 10,
+      "old_name": "119.163.239.191_45ch_20251014_酒店_可用31%.m3u",
+      "new_name": "[10]119.163.239.191_45ch_53%.m3u",
+      "source_ip": "119.163.239.191",
+      "availability": 0.5333333333333333,
+      "availability_percent": 53,
+      "avg_speed": 66.66666666666667,
+      "channel_count": 45
+    },
+    {
+      "rank": 11,
+      "old_name": "222.89.28.63_63ch_20251014_酒店_可用98%.m3u",
+      "new_name": "[11]222.89.28.63_63ch_52%.m3u",
+      "source_ip": "222.89.28.63",
+      "availability": 0.5238095238095238,
+      "availability_percent": 52,
+      "avg_speed": 66.66666666666667,
+      "channel_count": 63
+    },
+    {
+      "rank": 12,
+      "old_name": "219.155.204.119_172ch_20251014_组播_可用100%.m3u",
+      "new_name": "[12]219.155.204.119_172ch_47%.m3u",
+      "source_ip": "219.155.204.119",
+      "availability": 0.47674418604651164,
+      "availability_percent": 47,
+      "avg_speed": 60.0,
+      "channel_count": 172
+    },
+    {
+      "rank": 13,
+      "old_name": "[09]175.22.70.4_37ch_78%.m3u",
+      "new_name": "[13]175.22.70.4_37ch_51%.m3u",
+      "source_ip": "175.22.70.4",
+      "availability": 0.5135135135135135,
+      "availability_percent": 51,
+      "avg_speed": 66.66666666666667,
+      "channel_count": 37
+    },
+    {
+      "rank": 14,
+      "old_name": "119.119.194.39_133ch_20251015_组播_可用100%.m3u",
+      "new_name": "[14]119.119.194.39_133ch_39%.m3u",
+      "source_ip": "119.119.194.39",
+      "availability": 0.39849624060150374,
+      "availability_percent": 39,
+      "avg_speed": 50.0,
+      "channel_count": 133
+    },
+    {
+      "rank": 15,
+      "old_name": "221.15.95.137_172ch_20251015_组播_可用100%.m3u",
+      "new_name": "[15]221.15.95.137_172ch_31%.m3u",
+      "source_ip": "221.15.95.137",
+      "availability": 0.31976744186046513,
+      "availability_percent": 31,
+      "avg_speed": 40.0,
+      "channel_count": 172
+    }
+  ]
+}
