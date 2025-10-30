@@ -198,12 +198,11 @@ class M3UProcessor:
             formatted_survival = "新上线"  # 默认值
             if online_time:
                 try:
-                    from datetime import datetime
                     # 解析上线时间，格式如：2025-10-22 14:26
+                    from datetime import datetime
                     online_datetime = datetime.strptime(online_time, "%Y-%m-%d %H:%M")
-                    current_datetime = datetime.now()
-                    # 计算距今天数
-                    days_diff = (current_datetime - online_datetime).days
+                    days_diff = (datetime.now() - online_datetime).days
+                    
                     if days_diff == 0:
                         formatted_survival = "今日上线"
                     elif days_diff == 1:
@@ -211,8 +210,7 @@ class M3UProcessor:
                     else:
                         formatted_survival = f"上线{days_diff}天"
                 except (ValueError, AttributeError):
-                    # 如果解析失败，保持默认值
-                    pass
+                    pass  # 解析失败保持默认值
             
             # 保存带测速排序的M3U文件
             sorted_channels = self._sort_channels_by_speed(source_channels)

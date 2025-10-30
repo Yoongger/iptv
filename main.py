@@ -52,8 +52,6 @@ def save_ip_crawl_history(ip_addresses, logger):
     """保存IP爬取历史记录"""
     try:
         ip_history_file = f"{OUTPUT_DATA_DIR}/ip_crawl_history.json"
-        
-        # 确保输出目录存在
         os.makedirs(OUTPUT_DATA_DIR, exist_ok=True)
         
         # 读取现有记录
@@ -64,55 +62,43 @@ def save_ip_crawl_history(ip_addresses, logger):
                     existing_records = json.load(f)
             except json.JSONDecodeError:
                 logger.warning("IP爬取历史记录文件格式错误，将重新创建")
-                existing_records = []
         
         # 创建IP地址到记录的映射
         existing_ip_map = {record['ip']: record for record in existing_records}
+        current_time = time.strftime("%Y-%m-%d %H:%M:%S")
         
         # 更新或添加新记录
         for ip_info in ip_addresses:
-            current_time = time.strftime("%Y-%m-%d %H:%M:%S")
-            
-            # 确保所有必要属性都有默认值
             ip = getattr(ip_info, 'ip', '')
-            url = getattr(ip_info, 'url', '')
-            category = getattr(ip_info, 'category', '未知分类')
-            channel_count = getattr(ip_info, 'channel_count', 0)
-            location = getattr(ip_info, 'location', '未知位置')
-            online_time = getattr(ip_info, 'online_time', '')  # 新增上线时间
+            if not ip:
+                continue
+                
+            record_data = {
+                'ip': ip,
+                'url': getattr(ip_info, 'url', ''),
+                'category': getattr(ip_info, 'category', '未知分类'),
+                'channel_count': getattr(ip_info, 'channel_count', 0),
+                'location': getattr(ip_info, 'location', '未知位置'),
+                'online_time': getattr(ip_info, 'online_time', ''),
+                'last_crawled': current_time
+            }
             
             if ip in existing_ip_map:
                 # 更新现有记录
-                existing_ip_map[ip]['last_crawled'] = current_time
-                existing_ip_map[ip]['channel_count'] = channel_count
-                existing_ip_map[ip]['location'] = location
-                # 如果当前有上线时间，则更新上线时间（无论历史记录中是否有）
-                if online_time:
-                    existing_ip_map[ip]['online_time'] = online_time
+                existing_ip_map[ip].update(record_data)
             else:
                 # 添加新记录
-                existing_ip_map[ip] = {
-                    'ip': ip,
-                    'url': url,
-                    'category': category,
-                    'channel_count': channel_count,
-                    'location': location,
-                    'online_time': online_time,  # 新增上线时间
-                    'first_crawled': current_time,
-                    'last_crawled': current_time
-                }
+                record_data['first_crawled'] = current_time
+                existing_ip_map[ip] = record_data
         
         # 保存更新后的记录
         with open(ip_history_file, 'w', encoding='utf-8') as f:
             json.dump(list(existing_ip_map.values()), f, ensure_ascii=False, indent=2)
         
-        if logger:
-            logger.info(f"已保存 {len(existing_ip_map)} 个IP地址的爬取记录到 {ip_history_file}")
+        logger.info(f"已保存 {len(existing_ip_map)} 个IP地址的爬取记录到 {ip_history_file}")
             
     except Exception as e:
-        if logger:
-            logger.error(f"保存IP爬取历史失败: {e}")
-            logger.error(f"错误详情: {str(e)}")
+        logger.error(f"保存IP爬取历史失败: {e}")
 
 def run_single_cycle(start_page=1, end_page=None, skip_existing=True, sources='酒店源,组播源,秒播源'):
     """执行单次爬取和优化
