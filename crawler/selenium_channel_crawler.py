@@ -175,7 +175,7 @@ class SeleniumChannelCrawler:
                             if tip_text:
                                 self.logger.info(f"tip文本: '{tip_text}'")
                             if tip_text and len(tip_text) > 2:  # 有效的频道名称
-                                channel_name = tip_text
+                                channel_name = re.sub(r'\s+', ' ', tip_text.strip())
                                 self.logger.info(f"使用tip作为频道名称: {channel_name}")
                                 break
                     except NoSuchElementException:
@@ -200,7 +200,7 @@ class SeleniumChannelCrawler:
                                     if channel_text:
                                         self.logger.info(f"channel div文本: '{channel_text}'")
                                     if channel_text:
-                                        channel_name = channel_text
+                                        channel_name = re.sub(r'\s+', ' ', channel_text.strip())
                                         self.logger.info(f"使用channel div作为频道名称: {channel_name}")
                                         break
                                 
@@ -213,7 +213,7 @@ class SeleniumChannelCrawler:
                                         if element_text and len(element_text) > 2 and len(element_text) < 100:
                                             # 检查是否是有效的频道名称（不包含URL等）
                                             if not element_text.startswith(('http://', 'https://', 'm3u8', 'ts')):
-                                                channel_name = element_text
+                                                channel_name = re.sub(r'\s+', ' ', element_text.strip())
                                                 self.logger.info(f"使用元素文本作为频道名称: {channel_name}")
                                                 break
                                     
@@ -228,6 +228,8 @@ class SeleniumChannelCrawler:
                                             hidden_text = self.driver.execute_script(js_script, div)
                                             if hidden_text and len(hidden_text.strip()) > 2:
                                                 channel_name = hidden_text.strip()
+                                                # 清理频道名称中的多余空格
+                                                channel_name = re.sub(r'\s+', ' ', channel_name)
                                                 self.logger.info(f"使用JavaScript获取频道名称: {channel_name}")
                                         except Exception as js_e:
                                             self.logger.error(f"JavaScript获取文本失败: {js_e}")
@@ -239,7 +241,7 @@ class SeleniumChannelCrawler:
                                             for element in all_elements:
                                                 title = element.get_attribute('title')
                                                 if title and len(title.strip()) > 2:
-                                                    channel_name = title.strip()
+                                                    channel_name = re.sub(r'\s+', ' ', title.strip())
                                                     self.logger.info(f"使用title属性作为频道名称: {channel_name}")
                                                     break
                                         except Exception as attr_e:
@@ -251,10 +253,10 @@ class SeleniumChannelCrawler:
                                 if lines:
                                     # 跳过第一行（通常是IP信息），取第二行作为频道名称
                                     if len(lines) > 1:
-                                        channel_name = lines[1]
+                                        channel_name = re.sub(r'\s+', ' ', lines[1].strip())
                                         self.logger.info(f"使用第二行作为频道名称: {channel_name}")
                                     else:
-                                        channel_name = lines[0]
+                                        channel_name = re.sub(r'\s+', ' ', lines[0].strip())
                                         self.logger.info(f"使用第一行作为频道名称: {channel_name}")
                         except Exception as e:
                             self.logger.error(f"从div文本提取频道名称失败: {e}")
@@ -330,8 +332,8 @@ class SeleniumChannelCrawler:
                     
                     # 清理频道名称
                     if channel_name:
-                        # 移除多余的空白字符
-                        channel_name = ' '.join(channel_name.split())
+                        # 移除多余的空白字符和特殊空白字符
+                        channel_name = re.sub(r'\s+', ' ', channel_name.strip())
                         
                         # 清理频道名称中的URL和其他不需要的内容
                         # 移除包含http://或https://的部分
@@ -365,7 +367,10 @@ class SeleniumChannelCrawler:
                         channel_name = re.sub(r':\d+', '', channel_name)
                         
                         # 再次清理空白字符
-                        channel_name = ' '.join(channel_name.split())
+                        channel_name = re.sub(r'\s+', ' ', channel_name.strip())
+                        
+                        # 移除开头和结尾的特殊字符
+                        channel_name = re.sub(r'^[\s\W]+|[\s\W]+$', '', channel_name)
                         
                         # 如果名称太长，截断
                         if len(channel_name) > 100:
