@@ -1,0 +1,93 @@
+{
+  "timestamp": "2025-10-30T10:28:50.507920",
+  "optimization_steps": {
+    "total_files_found": 15,
+    "valid_files_after_testing": 8,
+    "files_after_deduplication": 7,
+    "final_renamed_files": 7
+  },
+  "deleted_files": [
+    "[02]江苏省南京市联通_53ch_今日上线_79%.m3u",
+    "[09]浙江省温州市鹿城区联通_51ch_上线2天_52%.m3u",
+    "[10]山西省太原市联通_40ch_今日上线_52%.m3u",
+    "江苏省镇江市电信_20ch_今日上线_100%.m3u",
+    "江苏省镇江市电信_20ch_新上线_100%.m3u",
+    "湖南省娄底市电信_84ch_今日上线_0%.m3u",
+    "湖南省娄底市电信_84ch_新上线_0%.m3u"
+  ],
+  "duplicate_files": [
+    "best_stable_channels.m3u"
+  ],
+  "final_files": [
+    {
+      "rank": 1,
+      "old_name": "[01]辽宁省沈阳市沈河区联通_102ch_昨日上线_79%.m3u",
+      "new_name": "[01]辽宁省沈阳市沈河区联通_102ch_昨日上线_79%.m3u",
+      "source_ip": "113.233.128.180",
+      "availability": 0.7941176470588235,
+      "availability_percent": 79,
+      "avg_speed": 100.0,
+      "channel_count": 102
+    },
+    {
+      "rank": 2,
+      "old_name": "[04]江苏省南京市联通_53ch_今日上线_79%.m3u",
+      "new_name": "[02]江苏省南京市联通_53ch_今日上线_79%.m3u",
+      "source_ip": "122.96.70.228",
+      "availability": 0.7924528301886793,
+      "availability_percent": 79,
+      "avg_speed": 100.0,
+      "channel_count": 53
+    },
+    {
+      "rank": 3,
+      "old_name": "[05]山西省太原市联通_45ch_今日上线_80%.m3u",
+      "new_name": "[03]山西省太原市联通_45ch_今日上线_80%.m3u",
+      "source_ip": "183.191.51.175",
+      "availability": 0.8,
+      "availability_percent": 80,
+      "avg_speed": 99.67175854576958,
+      "channel_count": 45
+    },
+    {
+      "rank": 4,
+      "old_name": "[06]湖南省长沙市电信_49ch_上线2天_79%.m3u",
+      "new_name": "[04]湖南省长沙市电信_49ch_上线2天_79%.m3u",
+      "source_ip": "175.10.171.238",
+      "availability": 0.7959183673469388,
+      "availability_percent": 79,
+      "avg_speed": 100.0,
+      "channel_count": 49
+    },
+    {
+      "rank": 5,
+      "old_name": "[08]湖北省孝感市联通_8ch_今日上线_75%.m3u",
+      "new_name": "[05]湖北省孝感市联通_8ch_今日上线_75%.m3u",
+      "source_ip": "183.92.150.237",
+      "availability": 0.75,
+      "availability_percent": 75,
+      "avg_speed": 100.0,
+      "channel_count": 8
+    },
+    {
+      "rank": 6,
+      "old_name": "[03]江苏省南京市联通_53ch_今日上线_79%.m3u",
+      "new_name": "[06]江苏省南京市联通_53ch_今日上线_52%.m3u",
+      "source_ip": "58.240.137.84",
+      "availability": 0.5283018867924528,
+      "availability_percent": 52,
+      "avg_speed": 66.66666666666667,
+      "channel_count": 53
+    },
+    {
+      "rank": 7,
+      "old_name": "[07]甘肃省天水市联通_44ch_上线2天_79%.m3u",
+      "new_name": "[07]甘肃省天水市联通_44ch_上线2天_52%.m3u",
+      "source_ip": "221.7.49.226",
+      "availability": 0.5227272727272727,
+      "availability_percent": 52,
+      "avg_speed": 66.66666666666667,
+      "channel_count": 44
+    }
+  ]
+}

@@ -52,7 +52,6 @@ class UltimateBypassCrawler:
                 return response.content.decode('utf-8', errors='ignore')
                 
         except Exception as e:
-            print(f"解码内容时出错: {e}")
             # 尝试其他编码
             try:
                 return response.content.decode('latin-1', errors='ignore')
@@ -101,13 +100,11 @@ class UltimateBypassCrawler:
                 if redirect_url:
                     if not redirect_url.startswith('http'):
                         redirect_url = requests.compat.urljoin(url, redirect_url)
-                    print(f"重定向到: {redirect_url}")
                     return self.session.get(redirect_url, timeout=30)
                     
             return response
             
         except requests.RequestException as e:
-            print(f"请求异常: {e}")
             return None
             
     def get_page_content(self) -> Optional[str]:

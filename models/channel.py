@@ -10,5 +10,6 @@ class Channel:
     source_ip: str
     category: str
     channel_count: int
+    location: Optional[str] = None
     tvg_id: Optional[str] = None
     tvg_logo: Optional[str] = None

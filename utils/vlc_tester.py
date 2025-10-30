@@ -60,19 +60,19 @@ class VLCTester:
             console_handler.setFormatter(logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s'))
             self.logger.addHandler(console_handler)
         
-        self.logger.info("VLC测试器已初始化")
+
 
     def _on_playing(self, event):
         """播放状态回调"""
-        self.logger.debug("检测到播放状态")
+        pass
         
     def _on_error(self, event):
         """错误状态回调"""
-        self.logger.error("播放错误")
+        pass
         
     def _on_end_reached(self, event):
         """结束状态回调"""
-        self.logger.debug("播放结束")
+        pass
 
     def test_stream(self, url: str) -> Dict:
         """测试单个流的可用性和质量 - 简化版本
@@ -83,7 +83,7 @@ class VLCTester:
         Returns:
             包含测试结果的字典
         """
-        self.logger.info(f"开始增强测试流: {url} (至少{self.test_duration}秒)")
+
         
         start_time = time.time()
         result = {
@@ -293,30 +293,4 @@ class VLCTester:
         
         return results
 
-if __name__ == "__main__":
-    try:
-        # 初始化测试器
-        tester = VLCTester(timeout=3, test_duration=2)
-        print("VLC测试器初始化成功")
-        
-        # 测试配置 - 请替换为实际可用的测试URL
-        test_url = "http://your-actual-stream-server/live/stream.m3u8"
-        print(f"测试URL: {test_url}")
-        
-        # 执行测试
-        result = tester.test_stream(test_url)
-        
-        # 输出结果
-        if result['available']:
-            print("Test SUCCESS")
-            print(f"- Buffer time: {result['buffer_time']:.2f}s")
-            print(f"- Stability: {result['stability']:.2f}")
-            print(f"- Score: {result['score']:.2f}")
-        else:
-            print("Test FAILED")
-            print(f"- Error: {result.get('error', 'Unknown error')}")
-            
-    except Exception as e:
-        print(f"Initialization failed: {str(e)}")
-    finally:
-        print("Test completed")
+

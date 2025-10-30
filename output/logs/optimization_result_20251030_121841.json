@@ -1,0 +1,176 @@
+{
+  "timestamp": "2025-10-30T12:18:41.803859",
+  "optimization_steps": {
+    "total_files_found": 44,
+    "valid_files_after_testing": 21,
+    "files_after_deduplication": 13,
+    "final_renamed_files": 13
+  },
+  "deleted_files": [
+    "北京市移动_129ch_昨日上线_0%.m3u",
+    "吉林省通化市联通_63ch_今日上线_98%.m3u",
+    "四川省成都市电信_128ch_上线644天_0%.m3u",
+    "天津市联通_36ch_上线649天_0%.m3u",
+    "山东省青岛市电信_284ch_上线631天_0%.m3u",
+    "山西省太原市电信_50ch_今日上线_100%.m3u",
+    "山西省太原市联通_40ch_今日上线_0%.m3u",
+    "山西省太原市联通_40ch_今日上线_87%.m3u",
+    "山西省太原市联通_64ch_今日上线_93%.m3u",
+    "山西省太原市联通_64ch_今日上线_95%.m3u",
+    "山西省长治市联通_108ch_昨日上线_0%.m3u",
+    "未知地区_62ch_上线633天_0%.m3u",
+    "江苏省镇江市电信_20ch_今日上线_100%.m3u",
+    "江西省南昌市联通_167ch_上线650天_0%.m3u",
+    "江西省宜春市联通_231ch_上线635天_0%.m3u",
+    "江西省宜春市联通_462ch_上线635天_0%.m3u",
+    "河北省石家庄市电信_48ch_上线648天_100%.m3u",
+    "河南省郑州市联通_65ch_今日上线_52%.m3u",
+    "河南省郑州市联通_65ch_今日上线_56%.m3u",
+    "湖南省娄底市电信_84ch_今日上线_0%.m3u",
+    "湖南省益阳市联通_52ch_上线635天_0%.m3u",
+    "湖南省长沙市电信_71ch_上线2天_80%.m3u",
+    "湖南省长沙市电信_71ch_昨日上线_57%.m3u"
+  ],
+  "duplicate_files": [
+    "best_stable_channels.m3u",
+    "[01]辽宁省沈阳市沈河区联通_102ch_昨日上线_79%.m3u",
+    "辽宁省沈阳市沈河区联通_102ch_昨日上线_92%.m3u",
+    "辽宁省沈阳市沈河区联通_102ch_昨日上线_96%.m3u",
+    "山西省太原市联通_45ch_今日上线_100%.m3u",
+    "[05]湖北省孝感市联通_8ch_今日上线_75%.m3u",
+    "江苏省南京市联通_53ch_今日上线_88%.m3u",
+    "湖南省长沙市电信_71ch_上线2天_85%.m3u"
+  ],
+  "final_files": [
+    {
+      "rank": 1,
+      "old_name": "辽宁省沈阳市沈河区联通_204ch_昨日上线_93%.m3u",
+      "new_name": "[01]辽宁省沈阳市沈河区联通_204ch_昨日上线_79%.m3u",
+      "source_ip": "113.233.128.180",
+      "availability": 0.7990196078431373,
+      "availability_percent": 79,
+      "avg_speed": 100.0,
+      "channel_count": 204
+    },
+    {
+      "rank": 2,
+      "old_name": "[02]江苏省南京市联通_53ch_今日上线_79%.m3u",
+      "new_name": "[02]江苏省南京市联通_53ch_今日上线_79%.m3u",
+      "source_ip": "122.96.70.228",
+      "availability": 0.7924528301886793,
+      "availability_percent": 79,
+      "avg_speed": 100.0,
+      "channel_count": 53
+    },
+    {
+      "rank": 3,
+      "old_name": "[06]江苏省南京市联通_53ch_今日上线_52%.m3u",
+      "new_name": "[03]江苏省南京市联通_53ch_今日上线_79%.m3u",
+      "source_ip": "58.240.137.84",
+      "availability": 0.7924528301886793,
+      "availability_percent": 79,
+      "avg_speed": 100.0,
+      "channel_count": 53
+    },
+    {
+      "rank": 4,
+      "old_name": "江苏省南京市联通_53ch_今日上线_98%.m3u",
+      "new_name": "[04]江苏省南京市联通_53ch_今日上线_79%.m3u",
+      "source_ip": "58.240.137.41",
+      "availability": 0.7924528301886793,
+      "availability_percent": 79,
+      "avg_speed": 100.0,
+      "channel_count": 53
+    },
+    {
+      "rank": 5,
+      "old_name": "湖北省孝感市联通_8ch_今日上线_100%.m3u",
+      "new_name": "[05]湖北省孝感市联通_8ch_今日上线_75%.m3u",
+      "source_ip": "183.92.150.237",
+      "availability": 0.75,
+      "availability_percent": 75,
+      "avg_speed": 100.0,
+      "channel_count": 8
+    },
+    {
+      "rank": 6,
+      "old_name": "湖南省长沙市电信_142ch_昨日上线_87%.m3u",
+      "new_name": "[06]湖南省长沙市电信_142ch_昨日上线_59%.m3u",
+      "source_ip": "175.11.72.34",
+      "availability": 0.5985915492957746,
+      "availability_percent": 59,
+      "avg_speed": 75.0,
+      "channel_count": 142
+    },
+    {
+      "rank": 7,
+      "old_name": "广东省深圳市电信_112ch_上线650天_90%.m3u",
+      "new_name": "[07]广东省深圳市电信_112ch_上线650天_52%.m3u",
+      "source_ip": "183.11.239.36",
+      "availability": 0.5267857142857143,
+      "availability_percent": 52,
+      "avg_speed": 66.66666666666667,
+      "channel_count": 112
+    },
+    {
+      "rank": 8,
+      "old_name": "山西省太原市联通_64ch_今日上线_96%.m3u",
+      "new_name": "[08]山西省太原市联通_64ch_今日上线_53%.m3u",
+      "source_ip": "171.116.255.74",
+      "availability": 0.53125,
+      "availability_percent": 53,
+      "avg_speed": 66.22818046145969,
+      "channel_count": 64
+    },
+    {
+      "rank": 9,
+      "old_name": "吉林省通化市联通_63ch_今日上线_92%.m3u",
+      "new_name": "[09]吉林省通化市联通_63ch_今日上线_52%.m3u",
+      "source_ip": "122.141.214.175",
+      "availability": 0.5238095238095238,
+      "availability_percent": 52,
+      "avg_speed": 62.39900536007351,
+      "channel_count": 63
+    },
+    {
+      "rank": 10,
+      "old_name": "[04]湖南省长沙市电信_49ch_上线2天_79%.m3u",
+      "new_name": "[10]湖南省长沙市电信_49ch_上线2天_53%.m3u",
+      "source_ip": "175.10.171.238",
+      "availability": 0.5306122448979592,
+      "availability_percent": 53,
+      "avg_speed": 66.66666666666667,
+      "channel_count": 49
+    },
+    {
+      "rank": 11,
+      "old_name": "[03]山西省太原市联通_45ch_今日上线_80%.m3u",
+      "new_name": "[11]山西省太原市联通_45ch_今日上线_53%.m3u",
+      "source_ip": "183.191.51.175",
+      "availability": 0.5333333333333333,
+      "availability_percent": 53,
+      "avg_speed": 66.66666666666667,
+      "channel_count": 45
+    },
+    {
+      "rank": 12,
+      "old_name": "[07]甘肃省天水市联通_44ch_上线2天_52%.m3u",
+      "new_name": "[12]甘肃省天水市联通_44ch_上线2天_52%.m3u",
+      "source_ip": "221.7.49.226",
+      "availability": 0.5227272727272727,
+      "availability_percent": 52,
+      "avg_speed": 66.66666666666667,
+      "channel_count": 44
+    },
+    {
+      "rank": 13,
+      "old_name": "湖南省长沙市电信_142ch_昨日上线_64%.m3u",
+      "new_name": "[13]湖南省长沙市电信_142ch_昨日上线_39%.m3u",
+      "source_ip": "175.8.30.83",
+      "availability": 0.39436619718309857,
+      "availability_percent": 39,
+      "avg_speed": 50.0,
+      "channel_count": 142
+    }
+  ]
+}

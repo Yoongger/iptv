@@ -16,10 +16,10 @@ import concurrent.futures
 import threading
 from typing import List, Dict, Tuple
 from datetime import datetime
-from pathlib import Path
-# from models.channel import Channel  # 移除未使用的导入
+
 from utils.speed_tester import SpeedTester
 from utils.vlc_tester import VLCTester
+from config.constants import USER_AGENT, OUTPUT_M3U_DIR, OUTPUT_DATA_DIR
 
 class M3UOptimizer:
     """M3U文件优化类"""
@@ -52,23 +52,25 @@ class M3UOptimizer:
         self.logger = logging.getLogger("M3UOptimizer")
         self.logger.setLevel(logging.INFO)
         
-        # 创建日志文件处理器
-        log_file = os.path.join(self.log_dir, f"m3u_optimizer_{datetime.now().strftime('%Y%m%d_%H%M%S')}.log")
-        file_handler = logging.FileHandler(log_file)
-        file_handler.setLevel(logging.INFO)
-        
-        # 设置日志格式
-        formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
-        file_handler.setFormatter(formatter)
-        
-        # 添加处理器到日志记录器
-        self.logger.addHandler(file_handler)
-        
-        # 同时输出到控制台
-        console_handler = logging.StreamHandler()
-        console_handler.setLevel(logging.INFO)
-        console_handler.setFormatter(formatter)
-        self.logger.addHandler(console_handler)
+        # 避免重复添加处理器
+        if not self.logger.handlers:
+            # 创建日志文件处理器
+            log_file = os.path.join(self.log_dir, f"m3u_optimizer_{datetime.now().strftime('%Y%m%d_%H%M%S')}.log")
+            file_handler = logging.FileHandler(log_file)
+            file_handler.setLevel(logging.INFO)
+
+            # 设置日志格式
+            formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
+            file_handler.setFormatter(formatter)
+
+            # 添加处理器到日志记录器
+            self.logger.addHandler(file_handler)
+
+            # 同时输出到控制台
+            console_handler = logging.StreamHandler()
+            console_handler.setLevel(logging.INFO)
+            console_handler.setFormatter(formatter)
+            self.logger.addHandler(console_handler)
         
         self.speed_tester = SpeedTester(max_workers=max_workers)
         self.use_vlc = use_vlc
@@ -77,7 +79,7 @@ class M3UOptimizer:
         if self.use_vlc:
             try:
                 self.vlc_tester = VLCTester(timeout=timeout)
-                self.logger.info("VLC测试器初始化成功")
+
             except Exception as e:
                 self.logger.error(f"VLC测试器初始化失败: {e}")
                 self.use_vlc = False
@@ -166,7 +168,7 @@ class M3UOptimizer:
             if group_channels:
                 sample_num = min(max(1, sample_size//3), len(group_channels))
                 test_channels.extend(random.sample(group_channels, sample_num))
-                self.logger.debug(f"从[{group_name}]组抽样{sample_num}个频道")
+
         
         # 补足样本量
         if len(test_channels) < sample_size:
@@ -174,7 +176,7 @@ class M3UOptimizer:
             if remaining:
                 need = sample_size - len(test_channels)
                 test_channels.extend(random.sample(remaining, min(need, len(remaining))))
-                self.logger.debug(f"补充随机抽样{need}个频道")
+
         
         return test_channels
 
@@ -194,7 +196,7 @@ class M3UOptimizer:
                 timeout=self.timeout, 
                 stream=True,
                 headers={
-                    'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/96.0.4664.110 Safari/537.36'
+                    'User-Agent': USER_AGENT
                 }
             )
             if response.status_code == 200:
@@ -296,7 +298,7 @@ class M3UOptimizer:
                 else:
                     return 0.0, False
         except Exception as e:
-            self.logger.debug(f"频道 {channel['name']} 测试异常: {e}")
+
             return 0.0, False
 
     def test_m3u_file(self, file_path: str) -> Tuple[bool, float, int, int]:
@@ -325,7 +327,7 @@ class M3UOptimizer:
         max_test_channels = min(len(test_channels), 8)  # 限制最多测试8个频道
         test_channels = test_channels[:max_test_channels]
         
-        self.logger.info(f"将通过智能抽样测试 {len(test_channels)}/{len(channels)} 个频道")
+
         
         # 使用线程池进行并发测试，避免阻塞
         with concurrent.futures.ThreadPoolExecutor(max_workers=min(3, len(test_channels))) as executor:
@@ -359,7 +361,7 @@ class M3UOptimizer:
             # 抽样测试的成功率
             sample_success_rate = valid_count / tested_channels if tested_channels > 0 else 0
             
-            self.logger.info(f"抽样测试结果: {valid_count}/{tested_channels} 成功，成功率: {sample_success_rate:.2%}")
+
             
             # 如果抽样成功率太低，认为整个文件不可用
             if sample_success_rate < 0.1:  # 抽样成功率低于10%
@@ -486,7 +488,7 @@ class M3UOptimizer:
         for file_path in m3u_files:
             file_name = os.path.basename(file_path)
             try:
-                self.logger.info(f"正在测试文件: {file_name}")
+    
                 is_valid, avg_speed, valid_count, total_count = self.test_m3u_file(file_path)
                 
                 if is_valid and valid_count > 0:
@@ -522,7 +524,7 @@ class M3UOptimizer:
                 except Exception as delete_error:
                     self.logger.error(f"删除出错文件 {file_name} 失败: {delete_error}")
         
-        self.logger.info(f"可用性测试完成: 保留 {len(valid_files)} 个，删除 {len(deleted_files)} 个")
+
         
         if not valid_files:
             self.logger.warning("没有找到任何可用的M3U文件")
@@ -589,8 +591,23 @@ class M3UOptimizer:
             channel_count = file_info['total_count']
             availability_percent = int(file_info['availability'] * 100)  # 转换为百分比整数
             
-            # 统一命名格式：[序号]IP_频道数ch_可用百分数%.m3u
-            new_name = f"[{rank:02d}]{source_ip}_{channel_count}ch_{availability_percent}%.m3u"
+            # 直接使用源IP信息中的完整信息，避免重复识别
+            # 从IP爬取历史记录中获取完整的IP信息
+            full_info = self._get_full_info_from_ip_history(source_ip)
+            if not full_info:
+                # 如果历史记录中没有，尝试从文件名中提取信息
+                full_info = self._extract_full_info_from_filename(file_info['file_name'])
+            
+            # 清理信息中的空格和特殊字符
+            cleaned_info = full_info.replace(" ", "").replace("频道数：", "").replace("新上线", "")
+            
+            # 改进存活时间显示，避免总是显示"新上线"
+            survival_time = self._get_survival_time_from_ip_info(source_ip)
+            if not survival_time or survival_time == "新上线":
+                survival_time = "未知存活"
+            
+            # 新文件名格式：[序号]_完整信息_频道数_存活时间_连通率
+            new_name = f"[{rank:02d}]{cleaned_info}_{channel_count}ch_{survival_time}_{availability_percent}%.m3u"
             new_path = os.path.join(self.m3u_dir, new_name)
             old_path = file_info['file_path']
             
@@ -693,6 +710,309 @@ class M3UOptimizer:
         
         return "unknown"
     
+    def _extract_location_from_filename(self, file_name: str) -> str:
+        """从文件名中提取物理地址信息"""
+        import re
+        
+        # 尝试从文件名中提取中文地区信息
+        location_match = re.search(r'[\u4e00-\u9fff]+', file_name)
+        if location_match:
+            location = location_match.group(0)
+            # 过滤掉运营商关键词
+            operators = ['联通', '电信', '移动']
+            for op in operators:
+                location = location.replace(op, '')
+            return location if location else "未知地区"
+        
+        return "未知地区"
+    
+    def _get_location_from_ip(self, ip_address: str) -> str:
+        """通过IP地址查询地理位置信息"""
+        import requests
+        import json
+        
+        try:
+            # 使用ip-api.com免费API查询IP地理位置
+            response = requests.get(f'http://ip-api.com/json/{ip_address}?lang=zh-CN', timeout=5)
+            if response.status_code == 200:
+                data = response.json()
+                if data['status'] == 'success':
+                    # 返回城市信息，如果城市为空则返回地区
+                    if data.get('city'):
+                        return data['city']
+                    elif data.get('regionName'):
+                        return data['regionName']
+                    elif data.get('country'):
+                        return data['country']
+        except:
+            pass
+        
+        # 如果API查询失败，根据IP段判断大致地区
+        try:
+            ip_parts = ip_address.split('.')
+            first_octet = int(ip_parts[0])
+            
+            # 根据IP地址段判断大致地区
+            if first_octet == 115:
+                return "浙江"
+            elif first_octet == 113:
+                return "陕西"
+            elif first_octet == 124:
+                return "浙江"
+            elif first_octet == 221:
+                return "山西"
+            elif first_octet == 171:
+                return "河南"
+            elif 1 <= first_octet <= 126:
+                return "电信"
+            elif 128 <= first_octet <= 191:
+                return "联通"
+            elif 192 <= first_octet <= 223:
+                return "移动"
+        except:
+            pass
+        
+        return "未知地区"
+    
+    def _get_location_from_ip(self, ip_address: str) -> str:
+        """通过IP地址查询地理位置信息"""
+        import requests
+        import json
+        
+        try:
+            # 使用ip-api.com免费API查询IP地理位置
+            response = requests.get(f'http://ip-api.com/json/{ip_address}?lang=zh-CN', timeout=5)
+            if response.status_code == 200:
+                data = response.json()
+                if data['status'] == 'success':
+                    # 返回城市信息，如果城市为空则返回地区
+                    if data.get('city'):
+                        return data['city']
+                    elif data.get('regionName'):
+                        return data['regionName']
+                    elif data.get('country'):
+                        return data['country']
+        except:
+            pass
+        
+        # 如果API查询失败，根据IP段判断大致地区
+        try:
+            ip_parts = ip_address.split('.')
+            first_octet = int(ip_parts[0])
+            
+            # 根据IP地址段判断大致地区
+            if first_octet == 115:
+                return "浙江"
+            elif first_octet == 113:
+                return "陕西"
+            elif first_octet == 124:
+                return "浙江"
+            elif first_octet == 221:
+                return "山西"
+            elif first_octet == 171:
+                return "河南"
+            elif 1 <= first_octet <= 126:
+                return "电信"
+            elif 128 <= first_octet <= 191:
+                return "联通"
+            elif 192 <= first_octet <= 223:
+                return "移动"
+        except:
+            pass
+        
+        return "未知地区"
+    
+    def _extract_operator_from_filename(self, file_name: str) -> str:
+        """从文件名中提取运营商信息"""
+        import re
+        
+        operators = ['联通', '电信', '移动']
+        for op in operators:
+            if op in file_name:
+                return op
+        
+        return ""
+    
+    def _get_location_from_ip_info(self, ip_address: str) -> str:
+        """从IP信息中获取物理地址信息
+        
+        Args:
+            ip_address: IP地址
+            
+        Returns:
+            物理地址信息，如果找不到则返回"未知地区"
+        """
+        try:
+            # 首先尝试从IP地址查询地理位置
+            location = self._get_location_from_ip(ip_address)
+            if location != "未知地区":
+                return location
+            
+            # 如果IP查询失败，尝试根据IP段判断大致地区
+            try:
+                ip_parts = ip_address.split('.')
+                first_octet = int(ip_parts[0])
+                second_octet = int(ip_parts[1])
+                
+                # 根据IP地址段判断大致地区
+                if first_octet == 115:
+                    return "浙江"
+                elif first_octet == 116:
+                    return "山西"
+                elif first_octet == 117:
+                    return "安徽"
+                elif first_octet == 118:
+                    return "福建"
+                elif first_octet == 119:
+                    return "吉林"
+                elif first_octet == 120:
+                    return "河北"
+                elif first_octet == 121:
+                    return "江苏"
+                elif first_octet == 122:
+                    return "山东"
+                elif first_octet == 123:
+                    return "广东"
+                elif first_octet == 124:
+                    return "辽宁"
+                elif first_octet == 125:
+                    return "黑龙江"
+                elif first_octet == 171:
+                    return "天津"
+                elif first_octet == 175:
+                    return "吉林"
+                elif first_octet == 183:
+                    return "广东"
+                elif first_octet == 221:
+                    return "北京"
+                elif first_octet == 222:
+                    return "吉林"
+                elif first_octet == 113:
+                    return "重庆"
+                elif first_octet == 112:
+                    return "上海"
+                elif first_octet == 1:
+                    return "北京"
+                elif first_octet == 49:
+                    return "浙江"
+                elif first_octet == 221:
+                    return "北京"
+                elif first_octet == 222:
+                    return "吉林"
+                
+                # 根据更详细的IP段判断
+                if first_octet == 121 and second_octet == 224:
+                    return "江苏南京"
+                elif first_octet == 117 and second_octet == 69:
+                    return "安徽合肥"
+                elif first_octet == 49 and second_octet == 71:
+                    return "浙江杭州"
+                elif first_octet == 221 and second_octet == 15:
+                    return "河南郑州"
+                elif first_octet == 117 and second_octet == 91:
+                    return "湖北武汉"
+                elif first_octet == 119 and second_octet == 53:
+                    return "吉林长春"
+                elif first_octet == 175 and second_octet == 22:
+                    return "吉林吉林"
+                elif first_octet == 175 and second_octet == 16:
+                    return "吉林吉林"
+                elif first_octet == 222 and second_octet == 163:
+                    return "吉林"
+                elif first_octet == 222 and second_octet == 162:
+                    return "吉林吉林"
+                elif first_octet == 119 and second_octet == 51:
+                    return "吉林长春"
+                elif first_octet == 171 and second_octet == 124:
+                    return "山西吕梁"
+                elif first_octet == 116 and second_octet == 179:
+                    return "山西大同"
+                elif first_octet == 175 and second_octet == 150:
+                    return "辽宁沈阳"
+                elif first_octet == 113 and second_octet == 206:
+                    return "重庆"
+                elif first_octet == 1 and second_octet == 199:
+                    return "北京"
+                elif first_octet == 171 and second_octet == 120:
+                    return "天津"
+                elif first_octet == 183 and second_octet == 7:
+                    return "广东广州"
+                elif first_octet == 112 and second_octet == 67:
+                    return "上海"
+                
+            except:
+                pass
+            
+            return "未知地区"
+            
+        except Exception as e:
+            self.logger.error(f"从IP信息获取物理地址失败: {e}")
+            return "未知地区"
+    
+    def _get_survival_time_from_ip_info(self, ip_address: str) -> str:
+        """从IP信息中获取存活时间信息
+        
+        Args:
+            ip_address: IP地址
+            
+        Returns:
+            存活时间信息，如果找不到则返回空字符串
+        """
+        try:
+            # 尝试从IP爬取历史记录中获取存活时间
+            ip_history_file = os.path.join("output", "data", "ip_crawl_history.json")
+            if os.path.exists(ip_history_file):
+                import json
+                with open(ip_history_file, 'r', encoding='utf-8') as f:
+                    ip_history = json.load(f)
+                
+                for ip_info in ip_history:
+                    if ip_info.get('ip') == ip_address:
+                        # 优先使用online_time计算存活时间
+                        online_time = ip_info.get('online_time', '')
+                        if online_time:
+                            try:
+                                from datetime import datetime
+                                # 解析上线时间，格式如：2025-10-22 14:26
+                                online_datetime = datetime.strptime(online_time, "%Y-%m-%d %H:%M")
+                                current_datetime = datetime.now()
+                                # 计算距今天数
+                                days_diff = (current_datetime - online_datetime).days
+                                if days_diff == 0:
+                                    return "今日上线"
+                                elif days_diff == 1:
+                                    return "昨日上线"
+                                else:
+                                    return f"上线{days_diff}天"
+                            except (ValueError, AttributeError):
+                                # 如果解析失败，使用first_crawled作为备选
+                                pass
+                        
+                        # 如果online_time不可用，使用first_crawled计算
+                        first_crawled = ip_info.get('first_crawled', '')
+                        if first_crawled:
+                            try:
+                                from datetime import datetime
+                                # 解析首次爬取时间，格式如：2025-10-28 18:21:03
+                                first_crawled_datetime = datetime.strptime(first_crawled, "%Y-%m-%d %H:%M:%S")
+                                current_datetime = datetime.now()
+                                # 计算距今天数
+                                days_diff = (current_datetime - first_crawled_datetime).days
+                                if days_diff == 0:
+                                    return "今日上线"
+                                elif days_diff == 1:
+                                    return "昨日上线"
+                                else:
+                                    return f"上线{days_diff}天"
+                            except (ValueError, AttributeError):
+                                return "新上线"
+                        
+            return "新上线"
+            
+        except Exception as e:
+            self.logger.error(f"从IP信息获取存活时间失败: {e}")
+            return "新上线"
+    
     def _standardize_channel_name(self, name: str) -> str:
         """标准化频道名称格式
         
@@ -783,12 +1103,72 @@ class M3UOptimizer:
             
         else:  # 混合频道
             return (priority, name.lower(), first_number, name)
+    
+    def _get_full_info_from_ip_history(self, ip_address: str) -> str:
+        """从IP爬取历史记录中获取完整的IP信息
         
-
-if __name__ == "__main__":
-    # 示例用法
-    optimizer = M3UOptimizer("output/m3u", use_vlc=True)
-    optimizer.optimize_m3u_files()
+        Args:
+            ip_address: IP地址
+            
+        Returns:
+            完整的IP信息字符串，如果找不到则返回空字符串
+        """
+        try:
+            # 尝试从IP爬取历史记录中获取完整信息
+            ip_history_file = os.path.join("output", "data", "ip_crawl_history.json")
+            if os.path.exists(ip_history_file):
+                import json
+                with open(ip_history_file, 'r', encoding='utf-8') as f:
+                    ip_history = json.load(f)
+                
+                for ip_info in ip_history:
+                    if ip_info.get('ip') == ip_address:
+                        # 优先使用location字段获取完整的地址和运营商信息
+                        location = ip_info.get('location', '')
+                        if location and location != "未知地区":
+                            return location
+                        
+                        # 如果location信息不完整，使用分类信息
+                        category = ip_info.get('category', '')
+                        if category and category != "未知分类":
+                            return category
+                        
+            return ""
+            
+        except Exception as e:
+            self.logger.error(f"从IP历史记录获取完整信息失败: {e}")
+            return ""
+    
+    def _extract_full_info_from_filename(self, file_name: str) -> str:
+        """从文件名中提取完整的地址和运营商信息
+        
+        Args:
+            file_name: 文件名
+            
+        Returns:
+            完整的地址和运营商信息，如果提取失败则返回"未知地区未知运营商"
+        """
+        try:
+            # 移除序号和文件扩展名
+            import re
+            
+            # 移除 [序号] 前缀和 .m3u 后缀
+            clean_name = re.sub(r'^\[\d+\]', '', file_name)
+            clean_name = re.sub(r'\.m3u$', '', clean_name)
+            
+            # 移除频道数、存活时间、连通率等后缀信息
+            clean_name = re.sub(r'\d+ch.*$', '', clean_name)
+            
+            # 如果文件名中还有有效信息，返回它
+            if clean_name and clean_name.strip():
+                return clean_name.strip()
+            
+            return "未知地区未知运营商"
+            
+        except Exception as e:
+            self.logger.error(f"从文件名提取完整信息失败: {e}")
+            return "未知地区未知运营商"
+        
 
 if __name__ == "__main__":
     # 示例用法

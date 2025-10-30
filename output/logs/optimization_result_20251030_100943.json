@@ -1,0 +1,135 @@
+{
+  "timestamp": "2025-10-30T10:09:43.518788",
+  "optimization_steps": {
+    "total_files_found": 30,
+    "valid_files_after_testing": 15,
+    "files_after_deduplication": 10,
+    "final_renamed_files": 10
+  },
+  "deleted_files": [
+    "[01]吉林省通化市联通_63ch_新上线_96%.m3u",
+    "[01]山西省太原市电信_50ch_新上线_90%.m3u",
+    "[01]山西省太原市联通_40ch_新上线_87%.m3u",
+    "[01]山西省太原市联通_55ch_新上线_0%.m3u",
+    "[01]山西省太原市联通_64ch_今日上线_100%.m3u",
+    "[01]山西省太原市联通_64ch_新上线_100%.m3u",
+    "[01]山西省太原市联通_64ch_新上线_93%.m3u",
+    "[01]河南省郑州市联通_65ch_新上线_58%.m3u",
+    "[01]湖南省长沙市电信_49ch_存活中_79%.m3u",
+    "[02]山西省太原市电信_50ch_今日上线_100%.m3u",
+    "[04]山西省太原市联通_64ch_今日上线_100%.m3u",
+    "[05]广西钦州市联通_33ch_存活中_51%.m3u",
+    "[07]河南省郑州市联通_65ch_今日上线_58%.m3u",
+    "[11]吉林省通化市联通_63ch_今日上线_98%.m3u",
+    "[12]山西省太原市联通_55ch_今日上线_0%.m3u"
+  ],
+  "duplicate_files": [
+    "[01]山西省太原市联通_45ch_新上线_100%.m3u",
+    "[10]江苏省南京市联通_53ch_今日上线_98%.m3u",
+    "[09]江苏省南京市联通_53ch_今日上线_98%.m3u",
+    "[08]江苏省南京市联通_53ch_今日上线_98%.m3u",
+    "[05]湖北省孝感市联通_8ch_今日上线_100%.m3u"
+  ],
+  "final_files": [
+    {
+      "rank": 1,
+      "old_name": "[03]辽宁省沈阳市沈河区联通_102ch_存活中_52%.m3u",
+      "new_name": "[01]辽宁省沈阳市沈河区联通_102ch_昨日上线_79%.m3u",
+      "source_ip": "113.233.128.180",
+      "availability": 0.7941176470588235,
+      "availability_percent": 79,
+      "avg_speed": 100.0,
+      "channel_count": 102
+    },
+    {
+      "rank": 2,
+      "old_name": "[01]江苏省南京市联通_53ch_新上线_84%.m3u",
+      "new_name": "[02]江苏省南京市联通_53ch_今日上线_79%.m3u",
+      "source_ip": "58.240.137.41",
+      "availability": 0.7924528301886793,
+      "availability_percent": 79,
+      "avg_speed": 100.0,
+      "channel_count": 53
+    },
+    {
+      "rank": 3,
+      "old_name": "[01]江苏省南京市联通_53ch_新上线_96%.m3u",
+      "new_name": "[03]江苏省南京市联通_53ch_今日上线_79%.m3u",
+      "source_ip": "58.240.137.84",
+      "availability": 0.7924528301886793,
+      "availability_percent": 79,
+      "avg_speed": 100.0,
+      "channel_count": 53
+    },
+    {
+      "rank": 4,
+      "old_name": "[01]江苏省南京市联通_53ch_新上线_98%.m3u",
+      "new_name": "[04]江苏省南京市联通_53ch_今日上线_79%.m3u",
+      "source_ip": "122.96.70.228",
+      "availability": 0.7924528301886793,
+      "availability_percent": 79,
+      "avg_speed": 100.0,
+      "channel_count": 53
+    },
+    {
+      "rank": 5,
+      "old_name": "[06]山西省太原市联通_45ch_今日上线_100%.m3u",
+      "new_name": "[05]山西省太原市联通_45ch_今日上线_80%.m3u",
+      "source_ip": "183.191.51.175",
+      "availability": 0.8,
+      "availability_percent": 80,
+      "avg_speed": 100.0,
+      "channel_count": 45
+    },
+    {
+      "rank": 6,
+      "old_name": "best_stable_channels.m3u",
+      "new_name": "[06]湖南省长沙市电信_49ch_上线2天_79%.m3u",
+      "source_ip": "175.10.171.238",
+      "availability": 0.7959183673469388,
+      "availability_percent": 79,
+      "avg_speed": 100.0,
+      "channel_count": 49
+    },
+    {
+      "rank": 7,
+      "old_name": "[02]甘肃省天水市联通_44ch_存活中_79%.m3u",
+      "new_name": "[07]甘肃省天水市联通_44ch_上线2天_79%.m3u",
+      "source_ip": "221.7.49.226",
+      "availability": 0.7954545454545454,
+      "availability_percent": 79,
+      "avg_speed": 100.0,
+      "channel_count": 44
+    },
+    {
+      "rank": 8,
+      "old_name": "[01]湖北省孝感市联通_8ch_新上线_100%.m3u",
+      "new_name": "[08]湖北省孝感市联通_8ch_今日上线_75%.m3u",
+      "source_ip": "183.92.150.237",
+      "availability": 0.75,
+      "availability_percent": 75,
+      "avg_speed": 100.0,
+      "channel_count": 8
+    },
+    {
+      "rank": 9,
+      "old_name": "[04]浙江省温州市鹿城区联通_51ch_存活中_52%.m3u",
+      "new_name": "[09]浙江省温州市鹿城区联通_51ch_上线2天_52%.m3u",
+      "source_ip": "123.159.33.248",
+      "availability": 0.5294117647058824,
+      "availability_percent": 52,
+      "avg_speed": 66.66666666666667,
+      "channel_count": 51
+    },
+    {
+      "rank": 10,
+      "old_name": "[03]山西省太原市联通_40ch_今日上线_87%.m3u",
+      "new_name": "[10]山西省太原市联通_40ch_今日上线_52%.m3u",
+      "source_ip": "118.81.59.13",
+      "availability": 0.525,
+      "availability_percent": 52,
+      "avg_speed": 66.66666666666667,
+      "channel_count": 40
+    }
+  ]
+}

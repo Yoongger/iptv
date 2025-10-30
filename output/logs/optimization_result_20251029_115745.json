@@ -1,0 +1,77 @@
+{
+  "timestamp": "2025-10-29T11:57:45.890433",
+  "optimization_steps": {
+    "total_files_found": 17,
+    "valid_files_after_testing": 7,
+    "files_after_deduplication": 5,
+    "final_renamed_files": 5
+  },
+  "deleted_files": [
+    "[01]天津市联通_48ch_新上线_0%.m3u",
+    "[01]山东省青岛市电信_284ch_新上线_0%.m3u",
+    "[01]江西省宜春市联通_231ch_新上线_0%.m3u",
+    "[01]甘肃省天水市联通_44ch_存活中_79%.m3u",
+    "[02]广西钦州市联通_33ch_今日上线_75%.m3u",
+    "[03]天津市联通_48ch_今日上线_0%.m3u",
+    "[03]山西省忻州市联通_94ch_存活中_53%.m3u",
+    "[04]广东省湛江市电信_75ch_存活中_53%.m3u",
+    "[04]江西省宜春市联通_231ch_上线634天_0%.m3u",
+    "[06]山东省青岛市电信_284ch_上线630天_0%.m3u"
+  ],
+  "duplicate_files": [
+    "[05]湖南省长沙市电信_49ch_昨日上线_95%.m3u",
+    "[01]辽宁省沈阳市沈河区联通_102ch_新上线_92%.m3u"
+  ],
+  "final_files": [
+    {
+      "rank": 1,
+      "old_name": "[01]湖南省长沙市电信_49ch_新上线_95%.m3u",
+      "new_name": "[01]湖南省长沙市电信_49ch_存活中_79%.m3u",
+      "source_ip": "175.10.171.238",
+      "availability": 0.7959183673469388,
+      "availability_percent": 79,
+      "avg_speed": 100.0,
+      "channel_count": 49
+    },
+    {
+      "rank": 2,
+      "old_name": "best_stable_channels.m3u",
+      "new_name": "[02]甘肃省天水市联通_44ch_存活中_79%.m3u",
+      "source_ip": "221.7.49.226",
+      "availability": 0.7954545454545454,
+      "availability_percent": 79,
+      "avg_speed": 100.0,
+      "channel_count": 44
+    },
+    {
+      "rank": 3,
+      "old_name": "[01]辽宁省沈阳市沈河区联通_102ch_今日上线_92%.m3u",
+      "new_name": "[03]辽宁省沈阳市沈河区联通_102ch_存活中_52%.m3u",
+      "source_ip": "113.233.128.180",
+      "availability": 0.5294117647058824,
+      "availability_percent": 52,
+      "avg_speed": 66.66666666666667,
+      "channel_count": 102
+    },
+    {
+      "rank": 4,
+      "old_name": "[02]浙江省温州市鹿城区联通_51ch_存活中_78%.m3u",
+      "new_name": "[04]浙江省温州市鹿城区联通_51ch_存活中_52%.m3u",
+      "source_ip": "123.159.33.248",
+      "availability": 0.5294117647058824,
+      "availability_percent": 52,
+      "avg_speed": 66.66666666666667,
+      "channel_count": 51
+    },
+    {
+      "rank": 5,
+      "old_name": "[01]广西钦州市联通_33ch_新上线_72%.m3u",
+      "new_name": "[05]广西钦州市联通_33ch_存活中_51%.m3u",
+      "source_ip": "171.38.149.21",
+      "availability": 0.5151515151515151,
+      "availability_percent": 51,
+      "avg_speed": 66.66666666666667,
+      "channel_count": 33
+    }
+  ]
+}
