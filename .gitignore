@@ -34,3 +34,6 @@ ipython_config.py
 
 # Logs
 *.log
+
+# Output data
+output/

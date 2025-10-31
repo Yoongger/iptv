@@ -135,9 +135,6 @@ class M3UOptimizer:
             
             # 记录排序结果
             self.logger.info(f"解析完成，共 {len(channels)} 个频道")
-            self.logger.info("排序后的前20个频道:")
-            for i, channel in enumerate(channels[:20]):
-                self.logger.info(f"{i+1:2d}. {channel['name']}")
             return channels
             
         except Exception as e:
@@ -434,11 +431,8 @@ class M3UOptimizer:
             # 使用统一的自然排序算法
             sorted_channels = sorted(channels, key=self._natural_sort_key)
             
-            # 详细记录排序结果
+            # 记录排序结果
             self.logger.info(f"频道排序完成，共 {len(sorted_channels)} 个频道")
-            self.logger.info("排序后的前20个频道:")
-            for i, channel in enumerate(sorted_channels[:20]):
-                self.logger.info(f"{i+1:2d}. {channel['name']}")
             
             with open(file_path, 'w', encoding='utf-8') as f:
                 # 写入M3U头部
@@ -572,11 +566,10 @@ class M3UOptimizer:
         self.logger.info("第三步：质量排序")
         self.logger.info("=" * 50)
         
-        # 综合评分排序：速度 * 0.7 + 可用率 * 0.2 + 频道数量 * 0.1（速度优先）
+        # 综合评分排序：速度 * 0.7 + 可用率 * 0.3（只考虑速度和可用率，速度优先）
         deduplicated_files.sort(key=lambda x: (
             min(x['avg_speed']/10, 1) * 0.7 + 
-            x['availability'] * 0.2 + 
-            min(x['total_count']/500, 1) * 0.1
+            x['availability'] * 0.3
         ), reverse=True)
         
         # 第四步：频道排序和统一重命名
@@ -589,7 +582,24 @@ class M3UOptimizer:
             rank = i + 1
             source_ip = file_info['source_ip']
             channel_count = file_info['total_count']
-            availability_percent = int(file_info['availability'] * 100)  # 转换为百分比整数
+            
+            # 重新测试文件以获取总体可用率
+            is_valid, avg_score, valid_count, total_count = self.test_m3u_file(file_info['file_path'])
+            
+            # 计算总体可用率（基于实际测试结果）
+            if total_count > 0:
+                overall_availability_rate = valid_count / total_count
+                overall_availability_percent = int(overall_availability_rate * 100)
+                
+                # 强制更新文件信息中的可用率数据，确保文件名使用最新的测试结果
+                file_info['availability'] = overall_availability_rate
+                file_info['valid_count'] = valid_count
+                file_info['total_count'] = total_count
+                
+                # 强制更新频道数量为实际测试结果
+                channel_count = total_count
+            else:
+                overall_availability_percent = 0
             
             # 直接使用源IP信息中的完整信息，避免重复识别
             # 从IP爬取历史记录中获取完整的IP信息
@@ -606,8 +616,8 @@ class M3UOptimizer:
             if not survival_time or survival_time == "新上线":
                 survival_time = "未知存活"
             
-            # 新文件名格式：[序号]_完整信息_频道数_存活时间_连通率
-            new_name = f"[{rank:02d}]{cleaned_info}_{channel_count}ch_{survival_time}_{availability_percent}%.m3u"
+            # 新文件名格式：[序号]_完整信息_频道数_存活时间_总体可用率数值
+            new_name = f"[{rank:02d}]{cleaned_info}_{channel_count}ch_{survival_time}_{overall_availability_percent}.m3u"
             new_path = os.path.join(self.m3u_dir, new_name)
             old_path = file_info['file_path']
             
@@ -634,12 +644,12 @@ class M3UOptimizer:
                     'new_name': new_name,
                     'source_ip': source_ip,
                     'availability': file_info['availability'],
-                    'availability_percent': availability_percent,
+                    'availability_percent': overall_availability_percent,
                     'avg_speed': file_info['avg_speed'],
                     'channel_count': channel_count
                 })
                 
-                self.logger.info(f"[{rank:02d}] {file_info['file_name']} -> {new_name} (可用率: {availability_percent}%, 速度: {file_info['avg_speed']:.2f})")
+                self.logger.info(f"[{rank:02d}] {file_info['file_name']} -> {new_name} (可用率: {overall_availability_percent}%, 速度: {file_info['avg_speed']:.2f})")
                 
             except Exception as e:
                 self.logger.error(f"处理文件 {file_info['file_name']} 失败: {e}")

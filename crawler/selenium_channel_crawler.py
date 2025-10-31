@@ -48,6 +48,78 @@ class SeleniumChannelCrawler:
         chrome_options.add_experimental_option("excludeSwitches", ["enable-automation"])
         chrome_options.add_experimental_option('useAutomationExtension', False)
         
+        # 禁用SSL错误和网络错误输出
+        chrome_options.add_argument('--disable-logging')
+        chrome_options.add_argument('--log-level=3')
+        chrome_options.add_argument('--silent')
+        chrome_options.add_argument('--disable-component-extensions-with-background-pages')
+        chrome_options.add_argument('--disable-background-timer-throttling')
+        chrome_options.add_argument('--disable-backgrounding-occluded-windows')
+        chrome_options.add_argument('--disable-renderer-backgrounding')
+        chrome_options.add_argument('--disable-features=TranslateUI,BlinkGenPropertyTrees')
+        chrome_options.add_argument('--disable-gpu')
+        
+        # 禁用GCM和推送服务
+        chrome_options.add_experimental_option("prefs", {
+            "profile.default_content_setting_values.notifications": 2,
+            "profile.managed_default_content_settings.notifications": 2,
+            "gcm.enabled": False
+        })
+        
+        # 禁用SSL错误和网络错误输出
+        chrome_options.add_argument('--disable-logging')
+        chrome_options.add_argument('--log-level=3')
+        chrome_options.add_argument('--silent')
+        chrome_options.add_argument('--disable-component-extensions-with-background-pages')
+        chrome_options.add_argument('--disable-background-timer-throttling')
+        chrome_options.add_argument('--disable-backgrounding-occluded-windows')
+        chrome_options.add_argument('--disable-renderer-backgrounding')
+        chrome_options.add_argument('--disable-features=TranslateUI,BlinkGenPropertyTrees')
+        chrome_options.add_argument('--disable-gpu')
+        
+        # 禁用GCM和推送服务
+        chrome_options.add_experimental_option("prefs", {
+            "profile.default_content_setting_values.notifications": 2,
+            "profile.managed_default_content_settings.notifications": 2,
+            "gcm.enabled": False
+        })
+        
+        # 禁用SSL错误和网络错误输出
+        chrome_options.add_argument('--disable-logging')
+        chrome_options.add_argument('--log-level=3')
+        chrome_options.add_argument('--silent')
+        chrome_options.add_argument('--disable-component-extensions-with-background-pages')
+        chrome_options.add_argument('--disable-background-timer-throttling')
+        chrome_options.add_argument('--disable-backgrounding-occluded-windows')
+        chrome_options.add_argument('--disable-renderer-backgrounding')
+        chrome_options.add_argument('--disable-features=TranslateUI,BlinkGenPropertyTrees')
+        chrome_options.add_argument('--disable-gpu')
+        
+        # 禁用GCM和推送服务
+        chrome_options.add_experimental_option("prefs", {
+            "profile.default_content_setting_values.notifications": 2,
+            "profile.managed_default_content_settings.notifications": 2,
+            "gcm.enabled": False
+        })
+        
+        # 禁用SSL错误和网络错误输出
+        chrome_options.add_argument('--disable-logging')
+        chrome_options.add_argument('--log-level=3')
+        chrome_options.add_argument('--silent')
+        chrome_options.add_argument('--disable-component-extensions-with-background-pages')
+        chrome_options.add_argument('--disable-background-timer-throttling')
+        chrome_options.add_argument('--disable-backgrounding-occluded-windows')
+        chrome_options.add_argument('--disable-renderer-backgrounding')
+        chrome_options.add_argument('--disable-features=TranslateUI,BlinkGenPropertyTrees')
+        chrome_options.add_argument('--disable-gpu')
+        
+        # 禁用GCM和推送服务
+        chrome_options.add_experimental_option("prefs", {
+            "profile.default_content_setting_values.notifications": 2,
+            "profile.managed_default_content_settings.notifications": 2,
+            "gcm.enabled": False
+        })
+        
         # 禁用图片加载以提高速度
         chrome_options.add_argument('--blink-settings=imagesEnabled=false')
         chrome_options.add_experimental_option("prefs", {"profile.managed_default_content_settings.images": 2})

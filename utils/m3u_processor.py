@@ -108,7 +108,9 @@ class M3UProcessor:
         with open(filename, 'w', encoding='utf-8') as f:
             f.write('#EXTM3U\n')
             for channel in sorted_channels:
-                f.write(f'#EXTINF:-1,{channel.name}\n')
+                # 在频道名称中添加源IP信息
+                channel_name_with_ip = f"{channel.name} [{channel.source_ip}]"
+                f.write(f'#EXTINF:-1,{channel_name_with_ip}\n')
                 f.write(f'{channel.url}\n')
         
         if self.logger:
@@ -138,8 +140,8 @@ class M3UProcessor:
         with open(filename, 'w', encoding='utf-8') as f:
             f.write('#EXTM3U\n')
             for i, channel in enumerate(sorted_channels):
-                # 添加速度排名到频道名称
-                ranked_name = f"[{i+1}] {channel.name}"
+                # 添加速度排名和源IP到频道名称
+                ranked_name = f"[{i+1}] {channel.name} [{channel.source_ip}]"
                 f.write(f'#EXTINF:-1,{ranked_name}\n')
                 f.write(f'{channel.url}\n')
         
@@ -222,7 +224,7 @@ class M3UProcessor:
             availability = valid_count / len(source_channels) if source_channels else 0
             availability_pct = int(availability * 100)
             
-            # 创建文件名：完整信息_IP地址_频道数_上线时间/存活时间_连通率（不带序号）
+            # 创建文件名：完整信息_IP地址_频道数_上线时间/存活时间_总体可用率（不带序号）
             filename = f"{cleaned_info}_{source_ip}_{channel_count}ch_{formatted_survival}_{availability_pct}%.m3u"
             
             filepath = f"{M3U_DIR}/{filename}"
